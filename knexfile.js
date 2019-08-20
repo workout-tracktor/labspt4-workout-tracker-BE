@@ -1,39 +1,45 @@
-// We need to modify this file with our settings for the db
+module.exports = {
 
-// module.exports = {
-//   development: {
-//     client: 'pg',
-//     connection:'postgres://localhost/<examples>',
-//     migrations: {
-//       directory: './db/migrations'
-//     },
-//     seeds: {
-//       directory: './db/seeds/dev'
-//     },
-//     useNullAsDefault: true
-//   },
+    development: {
+        client: 'postgres',
+        connection: {
+            database: process.env.DB_NAME,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD
+        },
+        migrations: {
+            directory: './data/migrations'
+        },
+        seeds: {
+            directory: './data/seeds'
+        }
+    },
 
-//   test: {
-//     client: 'pg',
-//     connection:'postgres://localhost/<examples_test>',
-//     migrations: {
-//       directory: './db/migrations'
-//     },
-//     seeds: {
-//       directory: './db/seeds/test'
-//     },
-//     useNullAsDefault: true
-//   },
+    staging: {
+        client: 'pg',
+        connection: {
+            database: process.env.DB_NAME,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD
+        },
+        pool: {
+            min: 2,
+            max: 10
+        },
+        migrations: {
+            tableName: 'knex_migrations'
+        }
+    },
 
-//   production: {
-//     client: 'pg',
-//     connection: process.env.DATABASE_URL,
-//     migrations: {
-//       directory: './db/migrations'
-//     },
-//     seeds: {
-//       directory: './db/seeds/production'
-//     },
-//     useNullAsDefault: true
-//   }
-// }
+    production: {
+        client: 'postgres',
+        connection: process.env.DATABASE_URL,
+        migrations: {
+            directory: './data/migrations'
+        },
+        seeds: {
+            directory: './data/seeds'
+        }
+    }
+
+};
