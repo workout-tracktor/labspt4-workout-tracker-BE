@@ -5,7 +5,7 @@
 1. Login into PgAdmin 4 and create a new database under PostgreSQL (default username is postgres). You can also
 make a new user instead of postgres through Postgres's command line tools
 
-2. After running yarn, create a .env with these variables 
+2. After running yarn, create a .env in the root of the project with these variables 
 
     * DB_NAME => this is the name of the database you created
     * DB_USER => Your postgres username. The default is postgres
