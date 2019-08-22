@@ -13,4 +13,4 @@ module.exports = (server) => {
     server.use(cors());
     server.use(helmet());
     server.use(express.json());
-}
+};
