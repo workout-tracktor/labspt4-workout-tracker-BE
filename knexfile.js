@@ -1,9 +1,6 @@
-require('dotenv').config();
-
+require('dotenv').config()
 
 module.exports = {
-
-
     development: {
         client: 'postgres',
         connection: {
@@ -18,7 +15,6 @@ module.exports = {
             directory: './data/seeds'
         }
     },
-
     staging: {
         client: 'postgres',
         connection: process.env.DATABASE_URL,
@@ -29,7 +25,6 @@ module.exports = {
             directory: './data/seeds'
         }
     },
-
     production: {
         client: 'postgres',
         connection: process.env.DATABASE_URL,
@@ -40,4 +35,4 @@ module.exports = {
             directory: './data/seeds'
         }
     }
-};
+}
