@@ -13,8 +13,8 @@ const add = async user => {
 
 //read
 //: returns all the users in the db
-const get_all = async () =>
-    await db(db_name)
+const get_all = async () => await db(db_name)
+
 //: takes in an object {first_name: 'Gordon'} returns first matched user
 const get_by = async value =>
     await db(db_name).where(value).first()

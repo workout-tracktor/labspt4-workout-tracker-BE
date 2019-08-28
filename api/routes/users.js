@@ -26,6 +26,18 @@ router.post('/register', async (req, res) => {
 
 //read
 //:
+router.get('/', async (req, res) => {
+    try {
+        const users = await modelUsers.get_all()
+        users.length > 0
+        ?   res.status(200).json(users)
+        :   res.status(404).json({message: `No users found.`})
+    } catch (err) {
+        console.log('get all users:', err)
+        res.status(500).json(err)
+    }
+})
+//:
 router.get('/:username', async (req, res) => {
     try {
         const user = await modelUsers.get_by({username: req.params.username})
