@@ -21,8 +21,9 @@ const get_by = async value =>
 
 //update
 //: takes in an uid and user object > updates user > returns that user
-const update_by_id = async (id, value) => {
-    await db(db_name).where({uid: id}).update(value)
+const update_by = async value => {
+    //add ability to also update by username
+    await db(db_name).where({uid: value.uid}).update(value)
     return await get_by({uid: id})
 }
 
@@ -36,6 +37,6 @@ module.exports = {
     add,
     get_all,
     get_by,
-    update_by_id,
+    update_by,
     remove_by_id,
 }
