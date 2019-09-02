@@ -2,6 +2,7 @@
 
 //IMPORTS
 const express = require('express')
+const misc = require('../helpers/misc')
 //middleware
 const mwUsers = require('../middleware/users')
 //models
@@ -18,9 +19,21 @@ router.post('/register', mwUsers.register, async (req, res) => {
         const user = await modelUsers.add(req.body)
         user
         ?   res.status(201).json(user)
-        :   res.status(404).json({message: `User couldn't be added.`})
+        :   res.status(404).json({error: `User couldn't be added.`})
     } catch (err) {
         // console.log('user register:', err)
+        res.status(500).json(err)
+    }
+})
+//:
+router.post('/login', mwUsers.authenticate, mwUsers.username_exists, mwUsers.password_matches, async (req, res) => {
+    try {
+        const user = await modelUsers.get_by({username: req.body.username})
+        user
+        ?   res.status(201).json({message: `login successful`, token: req.authorization, username: req.body.username})
+        :   res.status(404).json({error: `Wong!`})
+    } catch (err) {
+        console.log('user register err:',err)
         res.status(500).json(err)
     }
 })
@@ -30,23 +43,14 @@ router.post('/register', mwUsers.register, async (req, res) => {
 router.get('/', async (req, res) => {
     try {
         const users = await modelUsers.get_all()
-        users.length > 0
-        ?   res.status(200).json(users)
-        :   res.status(404).json({message: `No users found.`})
+        if(users.length > 0) {
+            //keep id hidden from frontend
+            users.map(user => misc.remove_keys(user, 'id'))
+            res.status(200).json(users)
+        } else
+            res.status(404).json({error: `No users found.`})
     } catch (err) {
         console.log('get all users:', err)
-        res.status(500).json(err)
-    }
-})
-//:
-router.get('/:username', async (req, res) => {
-    try {
-        const user = await modelUsers.get_by({username: req.params.username})
-        user
-        ?   res.status(200).json(user)
-        :   res.status(404).json({message: `Couldn't find user: ${req.params.username}.`})
-    } catch (err) {
-        console.log('get user by username:', err)
         res.status(500).json(err)
     }
 })
@@ -54,9 +58,12 @@ router.get('/:username', async (req, res) => {
 router.get('/:uid', async (req, res) => {
     try {
         const user = await modelUsers.get_by({uid: req.params.uid})
-        user
-        ?   res.status(200).json(user)
-        :   res.status(404).json({message: `Couldn't find user: ${req.params.username}.`})
+        if(user) {
+            //keep id hidden from frontend
+            misc.remove_keys(user, 'id')
+            res.status(200).json(user)
+        } else
+            res.status(404).json({error: `Couldn't find user: ${req.params.username}.`})
     } catch (err) {
         console.log('get user by uid:', err)
         res.status(500).json(err)
@@ -86,7 +93,7 @@ router.delete('/:uid', async (req, res) => {
         const user = await modelUsers.remove_by_uid(req.params.uid)
         user
         ? res.status(200).json({message: `${user.username} has been terminated.`})
-        : res.status(404).json({message: `Couldn't find user ${req.params.uid}.`})
+        : res.status(404).json({message: `Couldn't find user ${req.params.uid}.`, required_fields: 'uid'})
     } catch (err) {
         console.log('delete user:', err)
         res.status(500).json(err)

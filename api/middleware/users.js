@@ -14,7 +14,7 @@ authenticate = async (req, res, next) => {
 
     //check if all required keys are provided
     if(!check.required(req.body, ...required_fields))
-        return res.status(500).json({message: `The required fields are: ${required_fields}.`})
+        return res.status(500).json({error: `The required fields are: ${required_fields}.`})
 
     //rebuild reqbody, removing any possible extra fields
     req.body = {
@@ -26,20 +26,20 @@ authenticate = async (req, res, next) => {
 }
 //:
 username_exists = async (req, res, next) => {
-    const user = await retrieve.user_by_username(req.body.username)
+    const user = await retrieve.user_by({username: req.body.username})
     if(!user)
-        return res.status(404).json({message: `Username ${req.body.username} couldn't be found.`})
+        return res.status(404).json({error: `Username ${req.body.username} couldn't be found.`})
 
     next()
 }
 //:
 password_matches = async (req, res, next) => {
-    const user = await retrieve.user_by_username(req.body.username)
+    const user = await retrieve.user_by({username: req.body.username})
     if(user) {
         if(crypt.compareSync(req.body.password, user.password))
             req.authorization = jwtGenToken(user)
         else
-            return res.status(403).json({message: `Try the right password next time dumbass.`})
+            return res.status(403).json({error: `Try the right password next time dumbass.`})
     }
 
     next()
@@ -51,19 +51,21 @@ register = async (req, res, next) => {
     const required_fields = await retrieve.required_list('users')
     required_fields.remove('id', 'uid')
     if(!check.required(req.body, ...required_fields))
-        return res.status(500).json({message: `The required fields are: ${required_fields}.`})
+        return res.status(500).json({error: `The required fields are: ${required_fields}.`})
     
     //check unqiue fields
     const unique_fields = ['username', 'email']
     let message = ''
     let flag = false
+    let fields = []
     await Promise.all(unique_fields.map(async (field) => {
         if(await retrieve.user_by({[field]: req.body[field]})) {
             message = `${field} ${req.body[field]} is currently in use.`
+            fields.push(field)
             flag = true
         }
     }))
-    if(flag) return res.status(612).json({message: message})
+    if(flag) return res.status(612).json({error: message, invalid_fields: fields})
 
     //calculates id of new user
     const id = await retrieve.new_id('users')

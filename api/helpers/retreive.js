@@ -3,7 +3,7 @@ const modelUsers = require('../models/users')
 
 user_by = async (field) => {
     const user = await modelUsers.get_by(field)
-    if(user) return true
+    if(user) return user
     else return false
 }
 //gets list of required fields
