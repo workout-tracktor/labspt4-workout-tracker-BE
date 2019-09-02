@@ -8,7 +8,8 @@ const db_name = 'users'
 //create
 //:adds a new
 const add = async user => {
-    await db(db_name).insert(users)
+    await db(db_name).insert(user)
+    return get_by({id: user.id})
 }
 
 //read
@@ -21,22 +22,22 @@ const get_by = async value =>
 
 //update
 //: takes in an uid and user object > updates user > returns that user
-const update_by = async value => {
+const update_by_uid = async (uid, value) => {
     //add ability to also update by username
-    await db(db_name).where({uid: value.uid}).update(value)
-    return await get_by({uid: id})
+    await db(db_name).where({uid: uid}).update(value)
+    return await get_by(value)
 }
 
 //delete
 //: takes in a uid > removes user
 const remove_by_id = async id =>
-    await db(db_name).where({uid: id}).delete()
+    await db(db_name).where({id: id}).delete()
 
 //EXPORT
 module.exports = {
     add,
     get_all,
     get_by,
-    update_by,
+    update_by_uid,
     remove_by_id,
 }

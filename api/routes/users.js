@@ -67,12 +67,12 @@ router.get('/:uid', async (req, res) => {
 
 //update
 //:
-router.put('/:username', async (req, res) => {
+router.put('/:uid', async (req, res) => {
     try {
-        const user = await modelUsers.update_by(req.body)
+        const user = await modelUsers.update_by_uid(req.params.uid, req.body)
         user
-        ?   res.status(200).json(log)
-        :   res.status(404).json({message: `Couldn't update user ${req.params.username}.`})
+        ?   res.status(200).json(user)
+        :   res.status(404).json({message: `Couldn't update user ${req.params.uid}.`})
     } catch (err) {
         console.log('update user:', err)
         res.status(500).json(err)
@@ -82,7 +82,7 @@ router.put('/:username', async (req, res) => {
 //delete
 router.delete('/:uid', async (req, res) => {
     try {
-        await modelUsers.remove_by_id({uid: req.params.uid})
+        await modelUsers.remove_by_id(req.params.uid)
         res.status(200).json({message: `User has been terminated.`})
     } catch (err) {
         console.log('delete user:', err)
