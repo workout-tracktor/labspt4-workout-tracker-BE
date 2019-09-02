@@ -30,8 +30,11 @@ const update_by_uid = async (uid, value) => {
 
 //delete
 //: takes in a uid > removes user
-const remove_by_id = async id =>
-    await db(db_name).where({id: id}).delete()
+const remove_by_uid = async uid => {
+    const user = await get_by({uid: uid})
+    await db(db_name).where({uid: uid}).delete()
+    return user
+}
 
 //EXPORT
 module.exports = {
@@ -39,5 +42,5 @@ module.exports = {
     get_all,
     get_by,
     update_by_uid,
-    remove_by_id,
+    remove_by_uid,
 }

@@ -1,6 +1,6 @@
 //checks if body has specific keys
 //returns true if all required fields are there || false
-module.exports = (reqbody, ...keys) => 
+required = (reqbody, ...keys) => 
   !!keys.reduce((prevkey, key) => prevkey * (key in reqbody), 1)
 
 //loops through req.body and checks if any keys match the unique fields

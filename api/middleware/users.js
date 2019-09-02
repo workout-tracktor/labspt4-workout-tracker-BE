@@ -5,6 +5,7 @@ const uuid = require('uuid')
 const jwtGenToken = require('../helpers/jwt_token_gen')
 const check = require('../helpers/check')
 const retrieve = require('../helpers/retreive')
+const misc = require('../helpers/misc')
 
 //LOGIN
 //:
@@ -46,23 +47,38 @@ password_matches = async (req, res, next) => {
 //REGISTER
 //:
 register = async (req, res, next) => {
-    const required_fields = ['username', 'password']
-
     //check if all required fields are provided
+    const required_fields = await retrieve.required_list('users')
+    required_fields.remove('id', 'uid')
     if(!check.required(req.body, ...required_fields))
         return res.status(500).json({message: `The required fields are: ${required_fields}.`})
     
-    //check if username is unique
-    if(await retrieve.user_by_username(req.body.username))
-        return res.status(612).json({message: `Username ${req.body.username} is currently is use.`})
-    
-    //check if email is unique
+    //check unqiue fields
+    const unique_fields = ['username', 'email']
+    let message = ''
+    let flag = false
+    await Promise.all(unique_fields.map(async (field) => {
+        if(await retrieve.user_by({[field]: req.body[field]})) {
+            message = `${field} ${req.body[field]} is currently in use.`
+            flag = true
+        }
+    }))
+    if(flag) return res.status(612).json({message: message})
+
+    //calculates id of new user
+    const id = await retrieve.new_id('users')
+
+    //get timestamp
+    const now = new Date()
 
     //rebuild reqbody, removing any possible extra fields
     req.body = {
+        id: id,
         uid: uuid.v4(),
         username: req.body.username,
-        password: crypt.hashSync(req.body.password, 1)
+        email: req.body.email,
+        password: crypt.hashSync(req.body.password, 1),
+        start_date: now,
     }
 
     next()

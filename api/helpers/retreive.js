@@ -1,19 +1,25 @@
+const db = require('../../data/dbConfig')
 const modelUsers = require('../models/users')
 
-//user is a username
-user_by_username = async (username) => {
-    const user = await modelUsers.get_user_by({username: username})
-    if(user) return user
+user_by = async (field) => {
+    const user = await modelUsers.get_by(field)
+    if(user) return true
     else return false
 }
-//email is a user email
-user_by_email = async (email) => {
-    const user = await modelUsers.get_user_by({email: email})
-    if(user) return user
-    else return false
+//gets list of required fields
+required_list = async (table) => {
+    const schema = await db(table).columnInfo()
+    let list = []
+    for(let key in schema) if(!schema[key].nullable) list.push(key)
+    return list
+}
+//returns new id
+new_id = async (table) => {
+    return await db(table).max('id').first().then(value => ++value.max)
 }
 
 module.exports = {
-    user_by_username,
-    user_by_email,
+    user_by,
+    required_list,
+    new_id,
 }
