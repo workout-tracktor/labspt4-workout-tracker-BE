@@ -19,6 +19,7 @@ const get_all = async () => await db(db_name)
 //:returns all workouts with given parameters
 const get_all_by = async value => 
     await db(db_name).where(value)
+    
 //:takes in an object {workout_name: 'ab destroyer'} returns first matched workout
 const get_by = async value =>
     await db(db_name).where(value).first()
