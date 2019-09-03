@@ -16,6 +16,9 @@ const add = async workout => {
 //:returns all the workouts in the db
 const get_all = async () => await db(db_name)
 
+//:returns all workouts with given parameters
+const get_all_by = async value => 
+    await db(db_name).where(value)
 //:takes in an object {workout_name: 'ab destroyer'} returns first matched workout
 const get_by = async value =>
     await db(db_name).where(value).first()
@@ -39,6 +42,7 @@ const remove_by_wid = async (wid, value) => {
 module.exports = {
     add,
     get_all,
+    get_all_by,
     get_by,
     update_by_wid,
     remove_by_wid,

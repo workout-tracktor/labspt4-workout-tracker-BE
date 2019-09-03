@@ -1,11 +1,12 @@
 const db = require('../../data/dbConfig')
 const modelUsers = require('../models/users')
 
-user_by = async (field) => {
-    const user = await modelUsers.get_by(field)
-    if(user) return user
+get_by = async (table, field) => {
+    const data = await db(table).where(field).first()
+    if(data) return data
     else return false
 }
+
 //gets list of required fields
 required_list = async (table) => {
     const schema = await db(table).columnInfo()
@@ -19,7 +20,7 @@ new_id = async (table) => {
 }
 
 module.exports = {
-    user_by,
+    get_by,
     required_list,
     new_id,
 }

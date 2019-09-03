@@ -5,7 +5,7 @@ const express = require('express')
 const misc = require('../helpers/misc')
 
 //MIDDLEWARE
-// const mwWorkouts = require('../middleware/workouts')
+const mwWorkouts = require('../middleware/workouts')
 
 //MODELS
 const modelWorkouts = require('../models/workouts')
@@ -16,7 +16,7 @@ const router = express.Router()
 //ROUTES
 //create
 //:
-router.post('/', async (req, res) => {
+router.post('/', mwWorkouts.required, mwWorkouts.unique, mwWorkouts.prepare, async (req, res) => {
     try {
         const workout = await modelWorkouts.add(req.body)
         workout
@@ -46,10 +46,10 @@ router.get('/', async (req, res) => {
 //: get workout by name
 router.get('/name/:name', async (req, res) => {
     try {
-        const workout = await modelWorkouts.get_by({name: req.params.name})
-        if(workout) {
-            workout.remove_keys(workout, 'id')
-            res.status(200).json(workout)
+        const workouts = await modelWorkouts.get_all_by({name: req.params.name})
+        if(workouts.length > 0) {
+            workouts.map(workout => misc.remove_keys(workout, 'id'))
+            res.status(200).json(workouts)
         } else
             res.status(404).json({error: `Couldn't find workout: ${req.params.name}`})
     } catch (err) {
@@ -62,7 +62,7 @@ router.get('/wid/:wid', async (req, res) => {
     try {
         const workout = await modelWorkouts.get_by({wid: req.params.wid})
         if(workout) {
-            workout.remove_keys(workout, 'id')
+            misc.remove_keys(workout, 'id')
             res.status(200).json(workout)
         } else
             res.status(404).json({error: `Couldn't find workout: ${req.params.wid}`})
@@ -74,13 +74,12 @@ router.get('/wid/:wid', async (req, res) => {
 //: get workouts by username
 
 //update
-//: update workout by workout name
 //: update workout by wid
 router.put('/wid/:wid', async (req, res) => {
     try {
         const workout = await modelWorkouts.update_by_wid(req.params.wid, req.body)
         if(workout) {
-            workout.remove_keys(workout, 'id')
+            misc.remove_keys(workout, 'id')
             res.status(200).json(workout)
         } else
             res.status(404).json({error: `Couldn't find workout: ${req.params.wid}`})
