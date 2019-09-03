@@ -63,7 +63,7 @@ router.get('/:uid', async (req, res) => {
             misc.remove_keys(user, 'id')
             res.status(200).json(user)
         } else
-            res.status(404).json({error: `Couldn't find user: ${req.params.username}.`})
+            res.status(404).json({error: `Couldn't find user: ${req.params.uid}.`})
     } catch (err) {
         console.log('get user by uid:', err)
         res.status(500).json(err)

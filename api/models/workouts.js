@@ -38,6 +38,7 @@ const remove_by_wid = async (wid, value) => {
 //EXPORT
 module.exports = {
     add,
+    get_all,
     get_by,
     update_by_wid,
     remove_by_wid,
