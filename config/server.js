@@ -4,6 +4,7 @@ const cors = require('cors')
 const helmet = require('helmet')
 //routes
 const routes_users = require('../api/routes/users')
+const routes_workouts = require('../api/routes/workouts')
 
 //SETUP
 const server = express()
@@ -15,6 +16,7 @@ server.use(express.json())  //json all the things!
 
 //ROUTES
 server.use('/api/users', routes_users)
+server.use('/api/workouts', routes_workouts)
 
 //API IS ONLINE NOTIFICATION
 server.get('/', (req, res) =>

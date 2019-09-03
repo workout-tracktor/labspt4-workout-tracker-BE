@@ -49,7 +49,7 @@ password_matches = async (req, res, next) => {
 register = async (req, res, next) => {
     //check if all required fields are provided
     const required_fields = await retrieve.required_list('users')
-    required_fields.remove('id', 'uid')
+    required_fields.remove('id', 'uid', 'start_date')
     if(!check.required(req.body, ...required_fields))
         return res.status(500).json({error: `The required fields are: ${required_fields}.`})
     
