@@ -95,7 +95,7 @@ router.delete('/wid/:wid', async (req, res) => {
         const workout = await modelWorkouts.remove_by_wid(req.params.wid)
         workout
         ? res.status(200).json({message: `${workout.name} has been terminated.`})
-        : res.status(404).json({message: `Couldn't find workout ${req.params.wid}.`, required_fields: 'wid'})
+        : res.status(404).json({message: `Couldn't find workout ${req.params.wid}.`})
     } catch (err) {
         console.log('delete workout:', err)
         res.status(500).json(err)
