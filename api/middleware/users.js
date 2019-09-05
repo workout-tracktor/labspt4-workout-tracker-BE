@@ -10,6 +10,72 @@ const misc = require('../helpers/misc')
 //VARIABLES
 const db_name = 'users'
 
+
+// MAYBE HERE
+
+function login(email, password, callback) {
+    //this example uses the "pg" library
+    //more info here: https://github.com/brianc/node-postgres
+    
+    const bcrypt = require('bcrypt');
+    const postgres = require('pg');
+    
+    const conString = 'postgres://postgres:password@localhost/liftquest';
+    postgres(conString, function (err, client, done) {
+    if (err) return callback(err);
+    
+    const query = 'SELECT id, username, email, password FROM users WHERE email = $1';
+    client.query(query, [email], function (err, result) {
+      // NOTE: always call `done()` here to close
+      // the connection to the database
+      done();
+    
+      if (err || result.rows.length === 0) return callback(err || new WrongUsernameOrPasswordError(email));
+    
+      const user = result.rows[0];
+    
+      bcrypt.compare(password, user.password, function (err, isValid) {
+        if (err || !isValid) return callback(err || new WrongUsernameOrPasswordError(email));
+    
+        return callback(null, {
+          user_id: user.id,
+          username: user.username,
+          email: user.email
+        });
+      });
+    });
+    });
+    }
+
+    function create(user, callback) {
+        //this example uses the "pg" library
+        //more info here: https://github.com/brianc/node-postgres
+        
+        const bcrypt = require('bcrypt');
+        const postgres = require('pg');
+        
+        const conString = 'postgres://user:pass@localhost/mydb';
+        postgres(conString, function (err, client, done) {
+        if (err) return callback(err);
+        
+        bcrypt.hash(user.password, 10, function (err, hashedPassword) {
+          if (err) return callback(err);
+        
+          const query = 'INSERT INTO users(email, password) VALUES ($1, $2)';
+          client.query(query, [user.email, hashedPassword], function (err, result) {
+            // NOTE: always call `done()` here to close
+            // the connection to the database
+            done();
+        
+            return callback(err);
+          });
+        });
+        });
+        }
+
+
+
+
 //LOGIN
 //:
 authenticate = async (req, res, next) => {
