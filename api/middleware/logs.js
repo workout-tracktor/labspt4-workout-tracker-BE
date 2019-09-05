@@ -20,11 +20,19 @@ prepare = async (req, res, next) => {
     //rebuild reqbody, removing any possilbe extra fields
     req.body = {
         id: id,
+        wid: req.body.wid,
         lid: uuid.v4(),
         uid: req.body.uid,
-        timestamp: now,
-        //more to come
+        created: now,
+        distance: req.body.distance,
+        distance_units: req.body.distance_units,
+        reps: req.body.reps,
+        weight: req.body.weight,
+        weight_units: req.body.weight_units,
+        duration_ms: req.body.duration,
+        completed: req.body.completed
     }
+    
     next()
 }
 
@@ -35,7 +43,6 @@ unique = async (req, res, next) => {
     let fields = []
     await Promise.all(unique_fields.map(async field => {
         if(await retrieve.get_by(db_name, {[field]: req.body[field]})) {
-            console.log(req.body[field])
             message = `The ${field} '${req.body[field]}' is currently in use.`
             fields.push(field)
             flag = true
@@ -48,7 +55,7 @@ unique = async (req, res, next) => {
 
 required = async (req, res, next) => {
     const required_fields = await retrieve.required_list(db_name)
-    required_fields.remove('id', 'lid', 'timestamp')
+    required_fields.remove('id', 'lid', 'created')
     if(!check.required(req.body, ...required_fields))
         return res.status(500).json({error: `The required fields are: ${required_fields}.`})
 

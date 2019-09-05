@@ -2,10 +2,10 @@
 
 //IMPORTS
 const express = require('express')
-const misc = require('../helpers')
+const misc = require('../helpers/misc')
 
 //MIDDLEWARE
-// const mwLogs = require('../middleware/logs')
+const mwLogs = require('../middleware/logs')
 
 //MODELS
 const modelLogs = require('../models/logs')
@@ -16,7 +16,7 @@ const router = express.Router()
 //ROUTES
 //create
 //: add a new log
-router.post('/', async (req, res) => {
+router.post('/', mwLogs.required, mwLogs.unique, mwLogs.prepare, async (req, res) => {
     try {
         const log = await modelLogs.add(req.body)
         log
@@ -57,14 +57,14 @@ router.get('/uid/:uid', async (req, res) => {
     }
 })
 //: get all logs filtered by user id and workout id
-router.get('/uid/:uid/lid/:lid', async (req, res) => {
+router.get('/uid/:uid/wid/:wid', async (req, res) => {
     try {
-        const logs = await modelLogs.get_all_by({uid: req.params.uid, lid: req.params.lid})
+        const logs = await modelLogs.get_all_by({uid: req.params.uid, wid: req.params.wid})
         if(logs.length > 0) {
             logs.map(log => misc.remove_keys(log, 'id'))
             res.status(200).json(logs)
         } else
-            res.status(404).json({error: `Couldn't find any log with lid ${req.params.lid} for user ${req.params.uid}.`})
+            res.status(404).json({error: `Couldn't find any log with lid ${req.params.wid} for user ${req.params.uid}.`})
     } catch (err) {
         console.log(`get lid logs for user uid:`, err)
         res.status(500).json(err)
@@ -74,11 +74,11 @@ router.get('/uid/:uid/lid/:lid', async (req, res) => {
 router.get('/lid/:lid', async (req, res) => {
     try {
         const log = await modelLogs.get_by({lid: req.params.lid})
-        if(logs.length > 0) {
+        if(log) {
             misc.remove_keys(log, 'lid')
             res.status(200).json(log)
         } else
-            res.status(404).json({error: `Couldn't find log: ${req.params.log}.`})
+            res.status(404).json({error: `Couldn't find log ${req.params.lid}.`})
     } catch (err) {
         console.log('get log by lid', err)
         res.status(500).json(err)
@@ -103,8 +103,9 @@ router.put('/lid/:lid', async (req, res) => {
 
 //delete
 //: delete log by lid
-router.delete('/lid:lid', async (req, res) => {
+router.delete('/lid/:lid', async (req, res) => {
     try {
+        console.log('made it here')
         const log = await modelLogs.remove_by_lid(req.params.lid)
         log
         ?   res.status(200).json({message: `${log.lid} has been terminated.`})

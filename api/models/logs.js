@@ -21,8 +21,9 @@ const get_all_by = async value =>
     await db(db_name).where(value)
 
 //:takes in an object {uid: 57} returns first match
-const get_by = async value =>
-    await db(db_name).where(value).first()
+const get_by = async value => {
+    return await db(db_name).where(value).first()
+}
 
 //update
 //:takes in a lid and log object > updates log > returns log
