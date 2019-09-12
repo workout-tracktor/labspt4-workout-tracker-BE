@@ -1,0 +1,31 @@
+
+exports.up = (knex) =>
+    knex.schema.createTable('users', tbl => {
+        tbl.increments('id')
+            .primary()
+            .unique()
+            .notNullable()
+        tbl.text('user_id')
+            .unique()
+            .notNullable()
+        tbl.text('username')
+            .unique()
+            .notNullable()
+        tbl.text('password')
+            .notNullable()
+        tbl.text('email')
+            .unique()
+            .notNullable()
+        tbl.text('first_name')
+        tbl.text('last_name')
+        tbl.integer('weight_units')
+            .references('id')
+            .inTable('units')
+        tbl.integer('distance_units')
+            .references('id')
+            .inTable('units')
+        tbl.text('avatar')
+    })
+
+exports.down = (knex) =>
+    knex.schema.dropTableIfExists('users')
