@@ -3,6 +3,7 @@ const express = require("express")
 const cors = require('cors')
 const helmet = require('helmet')
 //routes
+const routes_users = require('../api/routes/users')
 
 //SETUP
 const server = express()
@@ -13,6 +14,7 @@ server.use(cors())          //ensures front and back end can work on the same ma
 server.use(express.json())  //json all the things!
 
 //ROUTES
+server.use('/api/users', routes_users)
 
 //API IS ONLINE NOTIFICATION
 server.get('/', (req, res) =>
