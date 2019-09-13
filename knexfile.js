@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 require('dotenv').config()
 
 module.exports = {
@@ -5,6 +6,17 @@ module.exports = {
     client: 'postgres',
     connection: {
       host: process.env.DB_HOST,
+=======
+require('dotenv').config();
+
+
+module.exports = {
+
+
+  development: {
+    client: 'postgres',
+    connection: {
+>>>>>>> master
       database: process.env.DB_NAME,
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD
@@ -38,4 +50,8 @@ module.exports = {
       directory: './data/seeds'
     }
   }
+<<<<<<< HEAD
 }
+=======
+};
+>>>>>>> master
