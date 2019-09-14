@@ -1,10 +1,11 @@
-//ENDPOINT: /api/users
+//ENDPOINT: /api
 
 //IMPORTS
 const express = require('express')
-const misc = require('../helpers/misc')
+const remove = require('../helpers/remove')
 
 //MIDDLEWARE
+const mw = require('../middleware/users')
 
 //MODELS
 const modelUsers = require('../models/users')
@@ -15,10 +16,10 @@ const router = express.Router()
 //ROUTES
 //create
 //:add a new user
-router.post('/', async (req, res) => {
+router.post('/user', async (req, res) => {
     try {
         const user = await modelUsers.add(req.body)
-        console.log('user', user)
+        // console.log('user', user)
         user
         ?   res.status(201).json(user)
         :   res.status(404).json({error: `User couldn't be added.`})
@@ -27,16 +28,12 @@ router.post('/', async (req, res) => {
     }
 })
 
-//get
-router.get('/', async (req, res) => {
+//:get all users fitting a set of requirments
+router.get('/users', mw.cleanreq, async (req, res) => {
+    // console.log('query', req.query)
     try {
-        console.log('made it here')
-        const users = await modelUsers.get_all()
-        if(users.length > 0) {
-            res.status(200).json(users)
-        } else
-            res.status(404).json({error: `No users found.`})
-    } catch (err) {
+        res.status(200).json({one: req.params.one, two: req.params.two})
+    } catch(err) {
         res.status(500).json(err)
     }
 })

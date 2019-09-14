@@ -14,7 +14,7 @@ server.use(cors())          //ensures front and back end can work on the same ma
 server.use(express.json())  //json all the things!
 
 //ROUTES
-server.use('/api/users', routes_users)
+server.use('/api', routes_users)
 
 //API IS ONLINE NOTIFICATION
 server.get('/', (req, res) =>
