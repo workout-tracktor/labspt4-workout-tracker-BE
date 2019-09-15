@@ -1,7 +1,14 @@
+//__   __  ___   ______   ______   ___      _______  _     _  _______  ______    _______ 
+//|  |_|  ||   | |      | |      | |   |    |       || | _ | ||   _   ||    _ |  |       |
+//|       ||   | |  _    ||  _    ||   |    |    ___|| || || ||  |_|  ||   | ||  |    ___|
+//|       ||   | | | |   || | |   ||   |    |   |___ |       ||       ||   |_||_ |   |___ 
+//|       ||   | | |_|   || |_|   ||   |___ |    ___||       ||       ||    __  ||    ___|
+//| ||_|| ||   | |       ||       ||       ||   |___ |   _   ||   _   ||   |  | ||   |___ 
+//|_|   |_||___| |______| |______| |_______||_______||__| |__||__| |__||___|  |_||_______| 
+
 //IMPORTS
 // const crypt = require('bcryptjs')
 // const uuid = require('uuid')
-const db = require('../../data/dbConfig')
 //local
 const get = require('../helpers/get')
 const check = require('../helpers/check')
@@ -16,6 +23,7 @@ const unqiue_fields = {
 //: Replaces any ! values with null in query
 //: Finds associated table
 //: Finds required fields
+//: Adds in unique field array
 //: Creates a query and settings object object for easier db calls
 //: Checks if the the request is for a single object or array of objects
 data = async (req, res, next) => {
@@ -46,7 +54,7 @@ required = (req, res, next) => {
             error: `Not all required fields are provided.`,
             required: req.data.required,
             missing: fields_missing})
-    next()
+    else next()
 }
 
 //:checks each provided unique field to see if they're unique
