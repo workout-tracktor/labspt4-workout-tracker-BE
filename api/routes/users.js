@@ -16,7 +16,7 @@ const router = express.Router()
 //ROUTES
 //create
 //:add a new user
-router.post('/user', mw.data, mw.required, async (req, res) => {
+router.post('/user', mw.data, mw.required, mw.unique, async (req, res) => {
     try {
         const user = await modelUsers.add(req.body)
         // console.log('user', user)

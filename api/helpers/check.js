@@ -1,19 +1,23 @@
-//checks if body has specific keys
-//returns true if all required fields are there || false
-required = (reqbody, ...keys) => 
-  !!keys.reduce((prevkey, key) => prevkey * (key in reqbody), 1)
+//IMPORTS
+//local
+const db = require('../../data/dbConfig')
 
 //loops through req.body and checks if any keys match the unique fields
 //if there's a match, it checks to see if it's value already exists in the db
-unique = async (reqbody, unique, model) => {
-  for(let key in reqbody)
-    if(unique.indexOf(key) !== -1)
-      if(await model.get_by({[key]: reqbody[key]}))
-        return key
-  return true
+filter = async (table, obj) => {
+  if(await db(table).where(obj).first()) return true
+  return false
+}
+
+unique = async (table, body, unqiue_fields) => {
+  const get = async (obj) => await Promise.resolve(db(table).where(obj).first())
+  let in_use = (await Promise.all(unqiue_fields.map(async item => {
+    const obj = {[item]: body[item]}
+    if(await get(obj) !== undefined) return obj
+  }))).filter(item => item)
+  return in_use
 }
 
 module.exports = {
-  required,
   unique,
 }
