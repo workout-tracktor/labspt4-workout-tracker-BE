@@ -10,10 +10,10 @@
 
 //IMPORTS
 const express = require('express')
-const remove = require('../helpers/remove')
+// const remove = require('../helpers/remove')
 
 //MIDDLEWARE
-const mw = require('../middleware')
+const {data, required, unique} = require('../middleware')
 
 //MODELS
 const modelUsers = require('../models/users')
@@ -24,7 +24,7 @@ const router = express.Router()
 //ROUTES
 //create
 //:add a new user
-router.post('/user', mw.data, mw.required, mw.unique, async (req, res) => {
+router.post('/user', data, required, unique, async (req, res) => {
     try {
         const user = await modelUsers.add(req.body)
         // console.log('user', user)
@@ -36,8 +36,19 @@ router.post('/user', mw.data, mw.required, mw.unique, async (req, res) => {
     }
 })
 
-//:get all users fitting a set of requirments
-router.get('/users', mw.data, async (req, res) => {
+//:get a single user fitting a set of requirements
+router.get('/user', data, async (req, res) => {
+    try {
+        const user = await modelUsers.get_by(req.data.query)
+        if(user) res.status(200).json(user)
+        else res.status(404).json({error: `No user found.`})
+    } catch(err) {
+        res.status(500).json(err)
+    }
+})
+
+//:get all users fitting a set of requirements
+router.get('/users', data, async (req, res) => {
     try {
         const users = await modelUsers.get_all_by(req.data.query)
         if(users.length > 0) res.status(200).json(users)
