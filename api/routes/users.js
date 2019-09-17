@@ -75,7 +75,7 @@ router.put('/user', data, id, async (req, res) => {
 router.delete('/user', data, id, async (req, res) => {
     try {
         const user = await modelUsers.remove_by_id(req.data.id, req.data.body)
-        if(user) res.status(201).json(user)
+        if(user) res.status(201).json({success: `User has been terminated.`})
         else res.status(404).json({error: `Couldn't update user.`})
     } catch(err) {
         res.status(500).json(err)
