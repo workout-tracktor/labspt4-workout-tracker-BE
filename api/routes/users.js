@@ -60,9 +60,21 @@ router.get('/users', data, async (req, res) => {
 
 //:
 router.put('/user', data, id, async (req, res) => {
-    console.log(req.data.id)
+    // console.log(req.data)
     try {
-        const user = await modelUsers.update_by_id(req.data.body, 1)
+        const user = await modelUsers.update_by_id(req.data.id, req.data.body)
+        // console.log('user', user)
+        if(user) res.status(201).json(user)
+        else res.status(404).json({error: `Couldn't update user.`})
+    } catch(err) {
+        res.status(500).json(err)
+    }
+})
+
+//:
+router.delete('/user', data, id, async (req, res) => {
+    try {
+        const user = await modelUsers.remove_by_id(req.data.id, req.data.body)
         if(user) res.status(201).json(user)
         else res.status(404).json({error: `Couldn't update user.`})
     } catch(err) {

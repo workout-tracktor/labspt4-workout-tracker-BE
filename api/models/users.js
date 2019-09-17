@@ -29,7 +29,13 @@ const get_all_by = async obj => await db(db_dame).where(obj)
 const get_by = async obj => await db(db_dame).where(obj).first()
 
 //:updates a user with a specific
-const update_by_id = async (id, obj) => await db(db_name).where({id: id}).update(obj)
+const update_by_id = async (id, obj) => {
+    console.log('0', {id: id})
+    const user = await db(db_name).where({id: id}).update(obj)
+
+    console.log('1', user)
+    return user
+}
 
 //:terminates a user
 const remove_by_id = async (id) => await db(db).where({id: id}).delete()
