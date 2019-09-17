@@ -4,6 +4,11 @@ const remove = require('../helpers/remove')
 const replace = require('../helpers/replace')
 
 //HELPERS
+schema = async table => 
+    Object.keys(await db(table).columnInfo())
+        .filter(val => val !== 'id')
+        .reduce((obj,val) => (obj[val]=null,obj), {})
+
 path = path => {
     let table = path.substr(1)
     let array = true
@@ -53,4 +58,5 @@ module.exports = {
     body,
     params,
     id,
+    schema,
 }
