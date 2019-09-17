@@ -39,6 +39,12 @@ params = (columns, given) => {
     return {settings, query}
 }
 
+id = async (table, field, field_id) => {
+    const id = await db(table).where({[field]: field_id}).select('id').first()
+    if(id) return id.id
+    else return false
+}
+
 //EXPORTS
 module.exports = {
     path,
@@ -46,4 +52,5 @@ module.exports = {
     required,
     body,
     params,
+    id,
 }

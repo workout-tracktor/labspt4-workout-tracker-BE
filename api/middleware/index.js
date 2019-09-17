@@ -71,9 +71,28 @@ unique = async (req, res, next) => {
     } else next()
 }
 
+//:get id via ?_id from query, or body
+id = async (req, res, next) => {
+    const field = req.data.table.slice(0, -1) + '_id'
+    const field_id = req.data.query[field] ? req.data.query[field] : req.data.body[field]
+    let id = false
+    if(field_id) {
+        id = await get.id(req.data.table, field, field_id)
+    } else {
+        res.status(612).json({error: `${field} not provided.`})
+    }
+    if(id) {
+        req.data.id = id
+        next()
+    } else {
+        res.status(612).json({error: `${field} not found.`}) 
+    }
+}
+
 //EXPORTS
 module.exports = {
     data,
     required,
     unique,
+    id,
 }

@@ -13,7 +13,7 @@ const express = require('express')
 // const remove = require('../helpers/remove')
 
 //MIDDLEWARE
-const {data, required, unique} = require('../middleware')
+const {data, required, unique, id} = require('../middleware')
 
 //MODELS
 const modelUsers = require('../models/users')
@@ -53,6 +53,18 @@ router.get('/users', data, async (req, res) => {
         const users = await modelUsers.get_all_by(req.data.query)
         if(users.length > 0) res.status(200).json(users)
         else res.status(404).json({error: `No users found.`}) //include query
+    } catch(err) {
+        res.status(500).json(err)
+    }
+})
+
+//:
+router.put('/user', data, id, async (req, res) => {
+    console.log(req.data.id)
+    try {
+        const user = await modelUsers.update_by_id(req.data.body, 1)
+        if(user) res.status(201).json(user)
+        else res.status(404).json({error: `Couldn't update user.`})
     } catch(err) {
         res.status(500).json(err)
     }
