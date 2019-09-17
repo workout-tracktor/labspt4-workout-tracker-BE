@@ -13,7 +13,7 @@ const express = require('express')
 // const remove = require('../helpers/remove')
 
 //MIDDLEWARE
-const {data, required, unique, id, prepare} = require('../middleware')
+const {data, required, unique, id, prepare, encrypt} = require('../middleware')
 
 //MODELS
 const modelUsers = require('../models/users')
@@ -24,7 +24,7 @@ const router = express.Router()
 //ROUTES
 //create
 //:add a new user
-router.post('/user', data, required, unique, prepare, async (req, res) => {
+router.post('/user', data, required, unique, encrypt, prepare, async (req, res) => {
     try {
         const user = await modelUsers.add(req.data.prepared)
         // console.log('user', user)
@@ -60,10 +60,22 @@ router.get('/users', data, async (req, res) => {
 
 //:
 router.put('/user', data, id, async (req, res) => {
-    console.log(req.data.id)
+    // console.log(req.data)
     try {
-        const user = await modelUsers.update_by_id(req.data.body, 1)
+        const user = await modelUsers.update_by_id(req.data.id, req.data.body)
+        // console.log('user', user)
         if(user) res.status(201).json(user)
+        else res.status(404).json({error: `Couldn't update user.`})
+    } catch(err) {
+        res.status(500).json(err)
+    }
+})
+
+//:
+router.delete('/user', data, id, async (req, res) => {
+    try {
+        const user = await modelUsers.remove_by_id(req.data.id, req.data.body)
+        if(user) res.status(201).json({success: `User has been terminated.`})
         else res.status(404).json({error: `Couldn't update user.`})
     } catch(err) {
         res.status(500).json(err)
