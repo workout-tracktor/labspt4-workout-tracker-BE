@@ -7,7 +7,7 @@
 //|_|   |_||___| |______| |______| |_______||_______||__| |__||__| |__||___|  |_||_______| 
 
 //IMPORTS
-// const crypt = require('bcryptjs')
+const crypt = require('bcryptjs')
 const uuid = require('uuid')
 //local
 const get = require('../helpers/get')
@@ -19,6 +19,24 @@ const unqiue_fields = {
     users: ['username', 'email'],
 }
 
+//:
+prepare = async (req, res, next) => {
+    const he_man = merge(req.data.schema, req.data.body)
+    he_man[req.data.table.slice(0, -1) + '_id'] = uuid.v4()
+    req.data.prepared = he_man
+    next()
+}
+
+//:
+encrypt = (req, res, next) => {
+    if(!req.data.body.hasOwnProperty('password'))
+        res.status(612).json({error: `Password is required.`})
+    
+    req.data.body.password = crypt.hashSync(req.data.body.password, 1)
+
+    next()
+}
+
 //: Removes all unnecessary data in req
 //: Removes any possible extra queries or fields in req.body
 //: Replaces any ! values with null in query
@@ -27,17 +45,10 @@ const unqiue_fields = {
 //: Adds in unique field array
 //: Creates a query and settings object object for easier db calls
 //: Checks if the the request is for a single object or array of objects
-prepare = async (req, res, next) => {
-    const shera = await get.schema(req.data.table)
-    const he_man = merge(shera, req.data.body)
-    he_man[req.data.table.slice(0, -1) + '_id'] = uuid.v4()
-    req.data.prepared = he_man
-    next()
-}
-
 data = async (req, res, next) => {
     const {array, table} = get.path(req.route.path)
     const columns = await get.columns(table)
+    const schema = get.schema(columns)
     const required = await get.required(table)
     const body = get.body(columns, req.body)
     const {settings, query} = get.params(columns, req.query)
@@ -45,6 +56,7 @@ data = async (req, res, next) => {
     req.data = {
         table: table,
         array: array,
+        schema: schema,
         required: required,
         settings: settings,
         unique: unqiue_fields[table],
@@ -111,4 +123,5 @@ module.exports = {
     unique,
     id,
     prepare,
+    encrypt,
 }

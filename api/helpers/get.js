@@ -4,8 +4,8 @@ const remove = require('../helpers/remove')
 const replace = require('../helpers/replace')
 
 //HELPERS
-schema = async table => 
-    Object.keys(await db(table).columnInfo())
+schema = columns => 
+    columns
         .filter(val => val !== 'id')
         .reduce((obj,val) => (obj[val]=null,obj), {})
 

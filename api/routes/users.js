@@ -13,7 +13,7 @@ const express = require('express')
 // const remove = require('../helpers/remove')
 
 //MIDDLEWARE
-const {data, required, unique, id, prepare} = require('../middleware')
+const {data, required, unique, id, prepare, encrypt} = require('../middleware')
 
 //MODELS
 const modelUsers = require('../models/users')
@@ -24,7 +24,7 @@ const router = express.Router()
 //ROUTES
 //create
 //:add a new user
-router.post('/user', data, required, unique, prepare, async (req, res) => {
+router.post('/user', data, required, unique, encrypt, prepare, async (req, res) => {
     try {
         const user = await modelUsers.add(req.data.prepared)
         // console.log('user', user)
