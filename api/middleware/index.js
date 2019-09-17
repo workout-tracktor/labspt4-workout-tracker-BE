@@ -8,10 +8,11 @@
 
 //IMPORTS
 // const crypt = require('bcryptjs')
-// const uuid = require('uuid')
+const uuid = require('uuid')
 //local
 const get = require('../helpers/get')
 const check = require('../helpers/check')
+const {merge} = require('../helpers/replace')
 
 //SETTINGS
 const unqiue_fields = {
@@ -26,6 +27,14 @@ const unqiue_fields = {
 //: Adds in unique field array
 //: Creates a query and settings object object for easier db calls
 //: Checks if the the request is for a single object or array of objects
+prepare = async (req, res, next) => {
+    const shera = await get.schema(req.data.table)
+    const he_man = merge(shera, req.data.body)
+    he_man[req.data.table.slice(0, -1) + '_id'] = uuid.v4()
+    req.data.prepared = he_man
+    next()
+}
+
 data = async (req, res, next) => {
     const {array, table} = get.path(req.route.path)
     const columns = await get.columns(table)
@@ -75,17 +84,23 @@ unique = async (req, res, next) => {
 id = async (req, res, next) => {
     const field = req.data.table.slice(0, -1) + '_id'
     const field_id = req.data.query[field] ? req.data.query[field] : req.data.body[field]
-    let id = false
+
+    // if(!field_id) res.status(612).json({error: `${field} not provided.`})
+    // const id = await get.id(req.data.table, field, field_id)
+    // if(!id) res.status(612).json({error: `${field} not found.`})
+    // req.data.id = id
+    // next()
+
     if(field_id) {
         id = await get.id(req.data.table, field, field_id)
+        if(id) {
+            req.data.id = id
+            next()
+        } else {
+            res.status(612).json({error: `${field} not found.`}) 
+        }
     } else {
         res.status(612).json({error: `${field} not provided.`})
-    }
-    if(id) {
-        req.data.id = id
-        next()
-    } else {
-        res.status(612).json({error: `${field} not found.`}) 
     }
 }
 
@@ -95,4 +110,5 @@ module.exports = {
     required,
     unique,
     id,
+    prepare,
 }
