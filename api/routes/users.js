@@ -58,6 +58,7 @@ router.get('/users', data, async (req, res) => {
     }
 })
 
+//update
 //:
 router.put('/user', data, id, async (req, res) => {
     // console.log(req.data)
@@ -71,6 +72,7 @@ router.put('/user', data, id, async (req, res) => {
     }
 })
 
+//delete
 //:
 router.delete('/user', data, id, async (req, res) => {
     try {

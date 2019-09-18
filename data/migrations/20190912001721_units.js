@@ -4,7 +4,7 @@ exports.up = (knex) =>
             .unique()
             .notNullable()
             .primary()
-        tbl.text('units_id')
+        tbl.text('unit_id')
             .unique()
             .notNullable()
         tbl.text('name')
