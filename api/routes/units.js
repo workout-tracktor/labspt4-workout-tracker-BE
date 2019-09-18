@@ -40,7 +40,7 @@ router.get('/unit', data, async (req, res) => {
 })
 
 //:get all users fitting a set of requirements
-router.get('/unit', data, async (req, res) => {
+router.get('/units', data, async (req, res) => {
     try {
         const units = await modelUnits.get_all_by(req.data.query)
         if(units.length > 0) res.status(200).json(units)

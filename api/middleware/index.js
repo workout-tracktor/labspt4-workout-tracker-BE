@@ -16,6 +16,7 @@ const {merge} = require('../helpers/replace')
 
 //SETTINGS
 const unqiue_fields = {
+    units: ['name'],
     users: ['username', 'email'],
 }
 
