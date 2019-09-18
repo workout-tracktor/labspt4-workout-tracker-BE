@@ -12,7 +12,7 @@ exports.up = (knex) =>
             .notNullable()
         tbl.integer('equipment_id')
             .references('id')
-            .inTable('equipment')
+            .inTable('equipments')
         tbl.text('description')
     })
 

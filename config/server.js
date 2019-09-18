@@ -5,7 +5,8 @@ const helmet = require('helmet')
 //routes
 const routes = {
     users: require('../api/routes/users'),
-    units: require('../api/routes/units')
+    units: require('../api/routes/units'),
+    equipments: require('../api/routes/equipment')
 }
 // const routes_users = require('../api/routes/users')
 // const routes_units = require('../api/routes/users')
@@ -21,6 +22,7 @@ server.use(express.json())  //json all the things!
 //ROUTES
 server.use('/api', routes.users)
 server.use('/api', routes.units)
+server.use('/api', routes.equipments)
 
 //API IS ONLINE NOTIFICATION
 server.get('/', (req, res) =>
