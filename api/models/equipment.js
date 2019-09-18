@@ -2,7 +2,7 @@
 const db = require('../../data/dbConfig')
 
 //VARIABLES
-const db_dame = 'equipment'
+const db_dame = 'equipments'
 
 //MODELS
 //create

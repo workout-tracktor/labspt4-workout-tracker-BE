@@ -16,6 +16,7 @@ const {merge} = require('../helpers/replace')
 
 //SETTINGS
 const unqiue_fields = {
+    equipments: ['name'],
     units: ['name'],
     users: ['username', 'email'],
 }
@@ -53,7 +54,7 @@ data = async (req, res, next) => {
     const required = await get.required(table)
     const body = get.body(columns, req.body)
     const {settings, query} = get.params(columns, req.query)
-
+    
     req.data = {
         table: table,
         array: array,

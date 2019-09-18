@@ -8,7 +8,7 @@ const express = require('express')
 const {data, required, unique, id, prepare, encrypt} = require('../middleware')
 
 //MODELS
-const modelEquipments = require('../models/equipments')
+const modelEquipments = require('../models/equipment')
 
 //SETUP
 const router = express.Router()
@@ -19,7 +19,6 @@ const router = express.Router()
 router.post('/equipment', data, required, unique, prepare, async (req, res) => {
     try {
         const equipment = await modelEquipments.add(req.data.prepared)
-        // console.log('equipment', equipment)
         equipment
         ?   res.status(201).json(equipment)
         :   res.status(404).json({error: `Equipment couldn't be added.`})
