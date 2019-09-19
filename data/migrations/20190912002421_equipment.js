@@ -1,5 +1,5 @@
 exports.up = (knex) =>
-    knex.schema.createTable('equipment', tbl => {
+    knex.schema.createTable('equipments', tbl => {
         tbl.increments('id')
             .primary()
             .unique()
@@ -14,4 +14,4 @@ exports.up = (knex) =>
     })
 
 exports.down = (knex) =>
-    knex.schema.dropTableIfExists('equipment')
+    knex.schema.dropTableIfExists('equipments')
