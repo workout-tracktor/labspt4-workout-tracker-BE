@@ -29,8 +29,8 @@ That's it! Enjoy your stay.
 | ------------- | ------------- | ------------- | ------------- | ------------- |
 |     id        |  int          |    yes        | unique        | primary key   |
 |  user_id      |  str          |   yes         | unique        |               |
-| firstname     | str           |               |               |               |
-|  lastname     | str           |               |               |               |
+| first_name    | str           |               |               |               |
+|  last_name    | str           |               |               |               |
 |  username     | str           |    yes        | unique        |               |
 |  password     | str           |    yes        |               |               |
 |   email       | str           |    yes        | unique        |               |
