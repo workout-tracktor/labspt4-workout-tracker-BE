@@ -10,6 +10,7 @@ conversion_therapy = (req, res, next) => {
     req.body.user_id = req.body.sub
     req.route.path = '/user'
     req.body.password = 'drowssap'
+    req.body.email = 'this is not your email.com '
 
     next()
 }
