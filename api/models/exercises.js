@@ -8,17 +8,13 @@ const db_name = 'exercises'
 //create
 //:add a new exercise
 const add = async exercise => {
-    try {
-        await db(db_name).insert(exercise)
+    await db(db_name).insert(exercise)
         // await db.raw(`INSERT INTO exercises (name, exercise_id, equipment_id) VALUES ('bob2', 'three', 2)`)
         // await db(db_name).insert({
         //     exercise_id: 'one2',
         //     name: 'test2',
         //     equipment_id: db(db_name).raw([1,2,3])
         // })
-    } catch(err) {
-        console.log(err)
-    }
     return await db(db_name).where({name: exercise.name})
 }
 
@@ -30,13 +26,32 @@ const get_all = async () => await db(db_name)
 const get_all_by = async obj => await db(db_name).where(obj)
 
 //:returns a single exercise fitting a set of  requirements
-const get_by = async obj => await db(db_name).where(obj).first()
+const get_by = async obj => {
+    const exercise = await db(db_name)
+    const equipment = await db('equipments').where({id: 2})
+    exercise.equipment = equipment
+    return exercise
+}
+// const get_by = async obj => {
+//     try {
+//         const that = await db.select('*').from(db_name)
+//             .then(async exercises => {
+//                 await exercises.map(async exercise => {
+//                     exercise.equipment = await db('equipments').where({id: Number(exercise.equipment_id)}).first()
+//                     console.log('exer', exercise)
+//                 })
+//                 console.log('exers', exercises)
+//             })
+//             .catch(err => console.log('err', err))
+//         return that
+//     } catch(err) {console.log(err)}
+// }
 
 //update
 //:updates a exercise with a specific id
 const update_by_id = async (id, obj) => {
     await db(db_name).where({id: id}).update(obj)
-    return await get_by({id: id})
+    return await db(db_name).where({id: id}).first()
 }
 
 //delete
