@@ -75,7 +75,7 @@ data = async (req, res, next) => {
 required = (req, res, next) => {
     const fields_missing = req.data.required.filter(item => !req.data.body.hasOwnProperty(item))
     if(fields_missing.length > 0)
-        res.status(610).json({
+        res.status(609).json({
             error: `Not all required fields are provided.`,
             required: req.data.required,
             missing: fields_missing})
