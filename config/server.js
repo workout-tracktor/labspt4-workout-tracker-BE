@@ -15,9 +15,15 @@ const routes = [
     require('../api/routes/workouts')
 ]
 
+//trying something
+var corsOptions = {
+    origin: '*',
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+   }
+
 //PRE MIDDLEWARE
 server.use(helmet())        //security
-server.use(cors())          //ensures front and back end can work on the same machine
+server.use(cors(corsOptions))          //ensures front and back end can work on the same machine
 server.use(express.json())  //json all the things!
 
 //START ROUTES
