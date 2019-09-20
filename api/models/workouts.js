@@ -19,7 +19,7 @@ complete
 
 const add = async workout => {
     await db(db_name).insert(workout)
-    return await db(db_name).where({name: workout.name})
+    return await db(db_name).where({name: workout.name}).first()
 }
 
 //read

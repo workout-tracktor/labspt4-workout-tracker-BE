@@ -6,6 +6,7 @@ const express = require('express')
 
 //MIDDLEWARE
 const {data, required, unique, id, prepare, encrypt} = require('../middleware')
+const {exercise_ids} = require('../middleware/workouts')
 
 //MODELS
 const modelWorkouts = require('../models/workouts')
@@ -16,7 +17,7 @@ const router = express.Router()
 //ROUTES
 //create
 //:add a new workout
-router.post('/workout', data, required, unique, prepare, async (req, res) => {
+router.post('/workout', data, required, unique, exercise_ids, prepare, async (req, res) => {
     try {
         const workout = await modelWorkouts.add(req.data.prepared)
         workout

@@ -16,7 +16,10 @@ const db_dame = 'users'
 
 //create
 //:add a new user
-const add = async user => await db(db_dame).insert(user)
+const add = async user => {
+    await db(db_dame).insert(user)
+    return db(db_dame).where(user).first()
+}
 
 //read
 //:returns an array of all users
