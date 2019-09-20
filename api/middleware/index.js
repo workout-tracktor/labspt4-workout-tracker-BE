@@ -87,7 +87,7 @@ unique = async (req, res, next) => {
     const in_use = await check.unique(req.data.table, req.data.body, req.data.unique)
     if(in_use.length > 0) {
         const unremarkable_fields = in_use.map(field => Object.keys(field)[0])
-        res.status(612).json({
+        res.status(613).json({
             error: `Unremarkable fields.`,
             unique: req.data.unique,
             unremarkable_fields: unremarkable_fields,
@@ -113,10 +113,10 @@ id = async (req, res, next) => {
             req.data.id = id
             next()
         } else {
-            res.status(612).json({error: `${field} not found.`}) 
+            res.status(614).json({error: `${field} not found.`}) 
         }
     } else {
-        res.status(612).json({error: `${field} not provided.`})
+        res.status(615).json({error: `${field} not provided.`})
     }
 }
 
