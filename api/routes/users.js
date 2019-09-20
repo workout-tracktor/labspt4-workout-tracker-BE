@@ -14,6 +14,7 @@ const express = require('express')
 
 //MIDDLEWARE
 const {data, required, unique, id, prepare, encrypt} = require('../middleware')
+const {conversion_therapy} = require('../middleware/auth0')
 
 //MODELS
 const modelUsers = require('../models/users')
@@ -23,6 +24,19 @@ const router = express.Router()
 
 //ROUTES
 //create
+//:new user for crap0
+router.post('/user/register', conversion_therapy, data, required, unique, encrypt, prepare, async (req, res) => {
+    const user = await modelUsers.add(req.data.prepared)
+    try {
+        user
+        ?   res.status(201).json(user)
+        :   res.status(404).json({error: `User couldn't be added.`})
+    } catch (err) {
+        console.log('err', err)
+        res.status(500).json(err)
+    }
+})
+
 //:add a new user
 router.post('/user', data, required, unique, encrypt, prepare, async (req, res) => {
     try {

@@ -26,7 +26,7 @@ const unqiue_fields = {
 //:
 prepare = async (req, res, next) => {
     const he_man = merge(req.data.schema, req.data.body)
-    he_man[req.data.table.slice(0, -1) + '_id'] = uuid.v4()
+    if(!req.data.user_id) he_man[req.data.table.slice(0, -1) + '_id'] = uuid.v4()
     req.data.prepared = he_man
     next()
 }
