@@ -14,6 +14,8 @@
 
 ## Welcome
 
+Find the production server at: https://workouttrackerprod.herokuapp.com/
+
 This is the home of the webpt4 Labs team backend codebase for the 'Workout-Tracker' product at Lambda School. I'm glad you are here because there's some things you should know:
 
 Firstly, this database is hosted on heroku. So if you need the credentials to get into the hosted server (incoming labs team) please get in touch with one of us on slack. (Our information can be found in the Support section of this readme.)
@@ -42,6 +44,31 @@ Foreign Keys
 
 weight_units REFERENCES id IN TABLE units </br>
 distance_units REFERENCES id IN TABLE units
+
+Routes
+
+post:/api/user </br>
+Registers a new user </br>
+Requirements in the table
+
+get:/api/user </br>
+Returns complete user object minus id
+
+put:/api/user </br>
+Updates a user </br>
+Returns complete user object minus id
+
+delete:/api/user </br>
+returns "the user has been terminated" </br>
+receive either a query /user?user_id=fdskjh&username=billybobthornton or a JSON body {user_id: 'fsfdfs'}
+
+get:/api/users </br>
+returns an array of users
+
+delete:/api/user </br>
+
+
+all GET requests take a query ex. /user?username=fsdfsf&weight_units=farts
 
 ### Workouts
 | Column        |     Type      |    Required   |   Unique      |     Key       | 
