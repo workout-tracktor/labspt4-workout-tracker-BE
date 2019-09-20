@@ -12,6 +12,7 @@ const routes = [
     require('../api/routes/units'),
     require('../api/routes/equipment'),
     require('../api/routes/exercises'),
+    require('../api/routes/workouts')
 ]
 
 //PRE MIDDLEWARE

@@ -16,6 +16,7 @@ const {merge} = require('../helpers/replace')
 
 //SETTINGS
 const unqiue_fields = {
+    workouts: ['name'],
     exercises: ['name'],
     equipments: ['name'],
     units: ['name'],
