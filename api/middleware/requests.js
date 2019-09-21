@@ -25,6 +25,24 @@ request = async (req, res, next) => {
             }
             break
         }
+        case 'PUT': {
+            try {
+                req.data.response = await update(req.data.table, req.data.id, req.data.body)
+            } catch(err) {
+                const error = errors(err.code, req.data.table)
+                res.status(error.status).json(error)
+            }
+        }
+        case 'DELETE': {
+            try {
+                req.data.response = req.data.array
+                ? await remove_all(req.data.table, req.data.id)
+                : await remove(req.data.table)
+            } catch(err) {
+                const error = errors(err.code, req.data.table)
+                res.status(error.status).json(error)
+            }
+        }
     }
 
     next()

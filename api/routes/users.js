@@ -31,14 +31,6 @@ const tbl = 'users'
 //:add a new user
 router.post('/user', conversion_therapy, data, required, encrypt, prepare, request, async (req, res) => {
     res.status(201).json(req.data.response)
-    // try {
-    //     const user = await add('users', req.data.prepared)
-    //     user
-    //     ?   res.status(201).json(user)
-    //     :   res.status(404).json({error: `User couldn't be added.`})
-    // } catch (err) {
-    //     res.status(500).json(err)
-    // }
 })
 
 //GET
@@ -53,35 +45,18 @@ router.get('/users', data, request,  async (req, res) => {
 
 //UPDATE
 //:update user by id
-router.put('/user', data, id, async (req, res) => {
-    try {
-        const user = await update(tbl, req.data.id, req.data.body)
-        if(user) res.status(201).json(user)
-        else res.status(404).json({error: `Couldn't update user.`})
-    } catch(err) {
-        res.status(500).json(err)
-    }
+router.put('/user', data, id, request, async (req, res) => {
+    res.status(200).json(req.data.response)
 })
 
 //DELETE
 //:remove user by id
-router.delete('/user', data, id, async (req, res) => {
-    try {
-        const user = await remove(tbl, req.data.id, req.data.body)
-        if(user) res.status(201).json({success: `User has been terminated.`})
-        else res.status(404).json({error: `User has survived.`})
-    } catch(err) {
-        res.status(500).json(err)
-    }
+router.delete('/user', data, id, request, async (req, res) => {
+    res.status(200).json(req.data.response)
 })
 //:remove all users
-router.delete('/users', async (req, res) => {
-    try {
-        await remove_all(tbl)
-        res.status(666).json({success: `Everyone has been terminated.`})
-    } catch(err) {
-        res.status(500).json({error: `There were survivors.`})
-    }
+router.delete('/users', data, request, async (req, res) => {
+    res.status(200).json(req.data.response)
 })
 
 //EXPORTS

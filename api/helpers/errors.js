@@ -14,8 +14,8 @@ const errors = (code, table, fields, expected) => {
         case '23505': error.status = 500; error.detail = 'Unremarkable fields.'; break
         //custom errors
         case '61200': error.status = 406; error.detail = 'Not content available following the criteria given.'; break
-
-        default: error.status = 612; error.detail = 'Backend broked, unknown error.'
+        //default
+        default: error.status = 613; error.detail = 'Backend broked, unknown error.'
     }
 
     return error
