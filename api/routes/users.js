@@ -15,6 +15,7 @@ const express = require('express')
 //MIDDLEWARE
 const {data, required, unique, id, prepare, encrypt} = require('../middleware')
 const {conversion_therapy} = require('../middleware/auth0')
+const {request} = require('../middleware/requests')
 
 //MODELS
 // const modelUsers = require('../models/users')
@@ -28,37 +29,26 @@ const tbl = 'users'
 
 //CREATE
 //:add a new user
-router.post('/user', conversion_therapy, data, required, unique, encrypt, prepare, async (req, res) => {
-    try {
-        const user = await add('users', req.data.prepared)
-        user
-        ?   res.status(201).json(user)
-        :   res.status(404).json({error: `User couldn't be added.`})
-    } catch (err) {
-        res.status(500).json(err)
-    }
+router.post('/user', conversion_therapy, data, required, encrypt, prepare, request, async (req, res) => {
+    res.status(201).json(req.data.response)
+    // try {
+    //     const user = await add('users', req.data.prepared)
+    //     user
+    //     ?   res.status(201).json(user)
+    //     :   res.status(404).json({error: `User couldn't be added.`})
+    // } catch (err) {
+    //     res.status(500).json(err)
+    // }
 })
 
 //GET
 //:get a single user fitting a set of requirements
-router.get('/user', data, async (req, res) => {
-    try {
-        const user = await get(tbl, req.data.query)
-        if(user) res.status(200).json(user)
-        else res.status(404).json({error: `No user found.`})
-    } catch(err) {
-        res.status(500).json(err)
-    }
+router.get('/user', data, request, (req, res) => {
+    res.status(200).json(req.data.response)
 })
 //:get all users fitting a set of requirements
-router.get('/users', data, async (req, res) => {
-    try {
-        const users = await get_all(tbl, req.data.query)
-        if(users.length > 0) res.status(200).json(users)
-        else res.status(404).json({error: `No users found.`}) //include query
-    } catch(err) {
-        res.status(500).json(err)
-    }
+router.get('/users', data, request,  async (req, res) => {
+    res.status(200).json(req.data.response)
 })
 
 //UPDATE

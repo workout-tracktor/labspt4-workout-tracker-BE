@@ -56,9 +56,11 @@ data = async (req, res, next) => {
     const required = await get.required(table)
     const body = get.body(columns, req.body)
     const {settings, query} = get.params(columns, req.query)
+    const method = req.method
     
     req.data = {
         table: table,
+        method: method,
         array: array,
         schema: schema,
         required: required,
