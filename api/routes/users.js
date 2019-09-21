@@ -26,6 +26,7 @@ const router = express.Router()
 //create
 //:new user for crap0
 router.post('/user/register', conversion_therapy, data, required, unique, encrypt, prepare, async (req, res) => {
+    // console.log('bod', req.data.body)
     const user = await modelUsers.add(req.data.prepared)
     try {
         user
