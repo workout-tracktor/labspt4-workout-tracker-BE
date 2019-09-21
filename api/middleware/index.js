@@ -56,7 +56,6 @@ data = async (req, res, next) => {
     const required = await get.required(table)
     const body = get.body(columns, req.body)
     const {settings, query} = get.params(columns, req.query)
-    body.email = 'twerkitout@burps.com'
     
     req.data = {
         table: table,

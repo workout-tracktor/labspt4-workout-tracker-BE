@@ -25,16 +25,16 @@ const router = express.Router()
 //ROUTES
 //create
 //:new user for crap0
-router.post('/user/register', conversion_therapy, data, required, unique, encrypt, prepare, async (req, res) => {
-    // console.log('bod', req.data.body)
-    const user = await modelUsers.add(req.data.prepared)
+router.post('/user/register',  async (req, res) => {
+    // const user = await modelUsers.add(req.data.prepared)
     try {
-        user
-        ?   res.status(201).json(user)
-        :   res.status(404).json({error: `User couldn't be added.`})
+        res.status(201).json(req.body)
+        // user
+        // ?   res.status(201).json(user)
+        // :   res.status(404).json({error: `User couldn't be added.`})
     } catch (err) {
-        console.log('err', err)
-        res.status(500).json(err)
+        // console.log('err', err)
+        // res.status(500).json(err)
     }
 })
 
