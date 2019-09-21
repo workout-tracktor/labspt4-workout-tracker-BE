@@ -17,31 +17,20 @@ const {data, required, unique, id, prepare, encrypt} = require('../middleware')
 const {conversion_therapy} = require('../middleware/auth0')
 
 //MODELS
-const modelUsers = require('../models/users')
+// const modelUsers = require('../models/users')
+const {add, get, get_all, update, remove, remove_all} = require('../models')
 
 //SETUP
 const router = express.Router()
+const tbl = 'users'
 
 //ROUTES
-//create
-//:new user for crap0
-router.post('/user/register', conversion_therapy, data, required, unique, encrypt, prepare, async (req, res) => {
-    const user = await modelUsers.add(req.data.prepared)
-    try {
-        user
-        ?   res.status(201).json(user)
-        :   res.status(404).json({error: `User couldn't be added.`})
-    } catch (err) {
-        console.log('err', err)
-        res.status(500).json(err)
-    }
-})
 
+//CREATE
 //:add a new user
-router.post('/user', data, required, unique, encrypt, prepare, async (req, res) => {
+router.post('/user', conversion_therapy, data, required, unique, encrypt, prepare, async (req, res) => {
     try {
-        const user = await modelUsers.add(req.data.prepared)
-        // console.log('user', user)
+        const user = await add('users', req.data.prepared)
         user
         ?   res.status(201).json(user)
         :   res.status(404).json({error: `User couldn't be added.`})
@@ -50,21 +39,21 @@ router.post('/user', data, required, unique, encrypt, prepare, async (req, res) 
     }
 })
 
+//GET
 //:get a single user fitting a set of requirements
 router.get('/user', data, async (req, res) => {
     try {
-        const user = await modelUsers.get_by(req.data.query)
+        const user = await get(tbl, req.data.query)
         if(user) res.status(200).json(user)
         else res.status(404).json({error: `No user found.`})
     } catch(err) {
         res.status(500).json(err)
     }
 })
-
 //:get all users fitting a set of requirements
 router.get('/users', data, async (req, res) => {
     try {
-        const users = await modelUsers.get_all_by(req.data.query)
+        const users = await get_all(tbl, req.data.query)
         if(users.length > 0) res.status(200).json(users)
         else res.status(404).json({error: `No users found.`}) //include query
     } catch(err) {
@@ -72,13 +61,11 @@ router.get('/users', data, async (req, res) => {
     }
 })
 
-//update
-//:
+//UPDATE
+//:update user by id
 router.put('/user', data, id, async (req, res) => {
-    // console.log(req.data)
     try {
-        const user = await modelUsers.update_by_id(req.data.id, req.data.body)
-        // console.log('user', user)
+        const user = await update(tbl, req.data.id, req.data.body)
         if(user) res.status(201).json(user)
         else res.status(404).json({error: `Couldn't update user.`})
     } catch(err) {
@@ -86,15 +73,24 @@ router.put('/user', data, id, async (req, res) => {
     }
 })
 
-//delete
-//:
+//DELETE
+//:remove user by id
 router.delete('/user', data, id, async (req, res) => {
     try {
-        const user = await modelUsers.remove_by_id(req.data.id, req.data.body)
+        const user = await remove(tbl, req.data.id, req.data.body)
         if(user) res.status(201).json({success: `User has been terminated.`})
-        else res.status(404).json({error: `Couldn't update user.`})
+        else res.status(404).json({error: `User has survived.`})
     } catch(err) {
         res.status(500).json(err)
+    }
+})
+//:remove all users
+router.delete('/users', async (req, res) => {
+    try {
+        await remove_all(tbl)
+        res.status(666).json({success: `Everyone has been terminated.`})
+    } catch(err) {
+        res.status(500).json({error: `There were survivors.`})
     }
 })
 
