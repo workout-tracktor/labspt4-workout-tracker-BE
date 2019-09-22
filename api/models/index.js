@@ -25,12 +25,13 @@ const update = async (tbl, id, obj) => {
 
 //DELETE
 //:terminates a row with given id from the given table
-const remove = async (tbl, id) => await db(tbl).where({id: id}).delete()
-//:terminatea all rows from given table
-const remove_all = async (tbl) => {
-    console.log(tbl)
-    await db(tbl).delete()
+const remove = async (tbl, id) => {
+    const obj = get(tbl, {id: id})
+    await db(tbl).where({id: id}).delete()
+    return obj
 }
+//:terminate all rows from given table
+const remove_all = async (tbl) => await db(tbl).delete()
 
 module.exports = {
     add,

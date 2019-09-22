@@ -1,28 +1,31 @@
 //IMPORTS
 
-const errors = (code, table, fields, expected) => {
+const send_error = (res, code, table, fields, expected) => {
+    // console.log(code, table, fields, expected)
     const error = {}
-    if(code) error.code = code
+    if(code) error.code = Number(code)
     if(table) error.table = table
-    if(fields) error.fields = fields
+    if(fields) error.problem_fields = fields
     if(expected) error.expected = expected
     error.status = 418
 
-    switch(code) {
+    switch(error.code) {
         //database errors
-        case '23502': error.status = 500; error.detail = 'Requirements not met.'; break
-        case '23505': error.status = 500; error.detail = 'Unremarkable fields.'; break
+        case 23502: error.status = 500; error.detail = `Requirements not met.`; break
+        case 23505: error.status = 500; error.detail = `Unremarkable fields.`; break
         //custom errors
-        case '61200': error.status = 406; error.detail = 'Not content available following the criteria given.'; break
+        case 61200: error.status = 406; error.detail = `No content available following the criteria given.`; break
+        case 61201: error.status = 406; error.detail = `Was not given a ${fields} field.`; break
+        case 61202: error.status = 404; error.detail = `${fields} could not be found.`; break
         //default
-        default: error.status = 613; error.detail = 'Backend broked, unknown error.'
+        default: error.status = 613; error.detail = `Backend broked, unknown error.`
     }
 
-    return error
+    res.status(error.status).json(error)
 }
 
 module.exports = {
-    errors
+    send_error
 }
 
 /*COMMON POSTGRES ERROR CODES

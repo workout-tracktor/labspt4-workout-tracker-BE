@@ -5,7 +5,7 @@ const express = require('express')
 // const remove = require('../helpers/remove')
 
 //MIDDLEWARE
-const {data, required, unique, id, prepare, encrypt} = require('../middleware')
+const {data, schema, id, prepare, encrypt} = require('../middleware')
 const {exercise_ids} = require('../middleware/workouts')
 
 //MODELS

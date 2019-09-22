@@ -13,7 +13,7 @@ const express = require('express')
 // const remove = require('../helpers/remove')
 
 //MIDDLEWARE
-const {data, required, unique, id, prepare, encrypt} = require('../middleware')
+const {data, schema, id, prepare, encrypt} = require('../middleware')
 const {conversion_therapy} = require('../middleware/auth0')
 const {request} = require('../middleware/requests')
 
@@ -29,7 +29,7 @@ const tbl = 'users'
 
 //CREATE
 //:add a new user
-router.post('/user', conversion_therapy, data, required, encrypt, prepare, request, async (req, res) => {
+router.post('/user', conversion_therapy, data, schema, encrypt, prepare, request, async (req, res) => {
     res.status(201).json(req.data.response)
 })
 
@@ -56,6 +56,7 @@ router.delete('/user', data, id, request, async (req, res) => {
 })
 //:remove all users
 router.delete('/users', data, request, async (req, res) => {
+    // console.log('>>>', req.data)
     res.status(200).json(req.data.response)
 })
 
