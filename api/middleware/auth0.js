@@ -9,7 +9,7 @@ conversion_therapy = (req, res, next) => {
     if(req.body.picture) req.body.avatar = req.body.picture
     if(req.body.sub) req.body.user_id = req.body.sub
     req.route.path = '/user'
-    req.body.password = 'drowssap'
+    // req.body.password = 'drowssap'
 
     next()
 }

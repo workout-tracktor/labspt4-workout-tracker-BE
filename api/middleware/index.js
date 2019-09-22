@@ -35,7 +35,7 @@ prepare = async (req, res, next) => {
 //:
 encrypt = (req, res, next) => {
     if(!req.data.body.hasOwnProperty('password'))
-        res.status(612).json({error: `Password is required.`})
+        return send_error(res, 61203, req.data.table, 'password', 'password')
     
     req.data.body.password = crypt.hashSync(req.data.body.password, 1)
 
@@ -77,7 +77,7 @@ data = async (req, res, next) => {
 schema = async (req, res, next) => {
     //check if all required fields are provided
     const fields_missing = req.data.required.filter(item => !req.data.body.hasOwnProperty(item))
-    if(fields_missing.length > 0) send_error(res, 23502, req.data.table, fields_missing, req.data.required)
+    if(fields_missing.length > 0) return send_error(res, 23502, req.data.table, fields_missing, req.data.required)
 
     //checks each provided unique field to see if they're unique
     const unremarkable_fields = (await check.unique(req.data.table, req.data.body, req.data.unique)).map(field => Object.keys(field)[0])
