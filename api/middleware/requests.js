@@ -29,6 +29,7 @@ request = async (req, res, next) => {
             try {
                 if(req.data.array) {
                     await remove_all(req.data.table)
+                    console.log('made it heere')
                     req.data.response = {success: `All targets have been eliminated.`}
                 } else {
                     const removed = await remove(req.data.table, req.data.id)

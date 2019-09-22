@@ -12,6 +12,7 @@ const send_error = (res, code, table, fields, expected) => {
     switch(error.code) {
         //database errors
         case 23502: error.status = 500; error.detail = `Requirements not met.`; break
+        case 23503: error.status = 500; error.detail = `Foreign key violation; cannot remove without first removing connected data.`; break
         case 23505: error.status = 500; error.detail = `Unremarkable fields.`; break
         //custom errors
         case 61200: error.status = 406; error.detail = `No content available following the criteria given.`; break

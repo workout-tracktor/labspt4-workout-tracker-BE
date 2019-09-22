@@ -14,7 +14,6 @@ const express = require('express')
 
 //MIDDLEWARE
 const {data, schema, id, prepare} = require('../middleware')
-const {conversion_therapy} = require('../middleware/auth0')
 const {request} = require('../middleware/requests')
 
 //SETUP
@@ -24,7 +23,7 @@ const router = express.Router()
 
 //CREATE
 //:add a new equipment
-router.post('/equipment', conversion_therapy, data, schema, prepare, request, async (req, res) => {
+router.post('/equipment', data, schema, prepare, request, async (req, res) => {
     res.status(201).json(req.data.response)
 })
 

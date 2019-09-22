@@ -98,6 +98,7 @@ id = async (req, res, next) => {
     if(!id) return send_error(res, 61202, req.data.table, field, field)
 
     req.data.id = id
+
     next()
 }
 

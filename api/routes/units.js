@@ -14,7 +14,6 @@ const express = require('express')
 
 //MIDDLEWARE
 const {data, schema, id, prepare} = require('../middleware')
-const {conversion_therapy} = require('../middleware/auth0')
 const {request} = require('../middleware/requests')
 
 //SETUP
