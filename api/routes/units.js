@@ -1,3 +1,11 @@
+// __   __  _______  _______  ______           ______    _______  __   __  _______  _______  _______ 
+//|  | |  ||       ||       ||    _ |         |    _ |  |       ||  | |  ||       ||       ||       |
+//|  | |  ||  _____||    ___||   | ||   ____  |   | ||  |   _   ||  | |  ||_     _||    ___||  _____|
+//|  |_|  || |_____ |   |___ |   |_||_ |____| |   |_||_ |  | |  ||  |_|  |  |   |  |   |___ | |_____ 
+//|       ||_____  ||    ___||    __  |       |    __  ||  |_|  ||       |  |   |  |    ___||_____  |
+//|       | _____| ||   |___ |   |  | |       |   |  | ||       ||       |  |   |  |   |___  _____| |
+//|_______||_______||_______||___|  |_|       |___|  |_||_______||_______|  |___|  |_______||_______|
+
 //ENDPOINT: /api
 
 //IMPORTS
@@ -5,75 +13,46 @@ const express = require('express')
 // const remove = require('../helpers/remove')
 
 //MIDDLEWARE
-const {data, schema, id, prepare, encrypt} = require('../middleware')
-
-//MODELS
-const modelUnits = require('../models/units')
+const {data, schema, id, prepare} = require('../middleware')
+const {conversion_therapy} = require('../middleware/auth0')
+const {request} = require('../middleware/requests')
 
 //SETUP
 const router = express.Router()
 
 //ROUTES
-//create
+
+//CREATE
 //:add a new unit
-router.post('/unit', data, required, unique, prepare, async (req, res) => {
-    try {
-        const unit = await modelUnits.add(req.data.prepared)
-        // console.log('unit', unit)
-        unit
-        ?   res.status(201).json(unit)
-        :   res.status(404).json({error: `unit couldn't be added.`})
-    } catch (err) {
-        res.status(500).json(err)
-    }
+router.post('/unit', conversion_therapy, data, schema, prepare, request, async (req, res) => {
+    res.status(201).json(req.data.response)
 })
 
+//GET
 //:get a single unit fitting a set of requirements
-router.get('/unit', data, async (req, res) => {
-    try {
-        const unit = await modelUnits.get_by(req.data.query)
-        if(unit) res.status(200).json(unit)
-        else res.status(404).json({error: `The database does not have unit.`})
-    } catch(err) {
-        res.status(500).json(err)
-    }
+router.get('/unit', data, request, (req, res) => {
+    res.status(200).json(req.data.response)
+})
+//:get all units fitting a set of requirements
+router.get('/units', data, request,  async (req, res) => {
+    res.status(200).json(req.data.response)
 })
 
-//:get all users fitting a set of requirements
-router.get('/units', data, async (req, res) => {
-    try {
-        const units = await modelUnits.get_all_by(req.data.query)
-        if(units.length > 0) res.status(200).json(units)
-        else res.status(404).json({error: `No units found.`}) //include query
-    } catch(err) {
-        res.status(500).json(err)
-    }
+//UPDATE
+//:update unit by id
+router.put('/unit', data, id, request, async (req, res) => {
+    res.status(200).json(req.data.response)
 })
 
-//update
-//:
-router.put('/unit', data, id, async (req, res) => {
-    // console.log(req.data)
-    try {
-        const unit = await modelUnits.update_by_id(req.data.id, req.data.body)
-        // console.log('unit', unit)
-        if(unit) res.status(201).json(unit)
-        else res.status(404).json({error: `Couldn't update unit.`})
-    } catch(err) {
-        res.status(500).json(err)
-    }
+//DELETE
+//:remove unit by id
+router.delete('/unit', data, id, request, async (req, res) => {
+    res.status(200).json(req.data.response)
 })
-
-//delete
-//:
-router.delete('/unit', data, id, async (req, res) => {
-    try {
-        const unit = await modelUnits.remove_by_id(req.data.id, req.data.body)
-        if(unit) res.status(201).json({success: `unit has been terminated.`})
-        else res.status(404).json({error: `Couldn't update unit.`})
-    } catch(err) {
-        res.status(500).json(err)
-    }
+//:remove all units
+router.delete('/units', data, request, async (req, res) => {
+    // console.log('>>>', req.data)
+    res.status(200).json(req.data.response)
 })
 
 //EXPORTS
