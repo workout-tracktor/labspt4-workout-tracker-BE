@@ -24,7 +24,7 @@ const router = express.Router()
 
 //CREATE
 //:add a new unit
-router.post('/unit', conversion_therapy, data, schema, prepare, request, async (req, res) => {
+router.post('/unit', data, schema, prepare, request, async (req, res) => {
     res.status(201).json(req.data.response)
 })
 

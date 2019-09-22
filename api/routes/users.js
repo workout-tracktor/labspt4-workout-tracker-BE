@@ -17,13 +17,8 @@ const {data, schema, id, prepare, encrypt} = require('../middleware')
 const {conversion_therapy} = require('../middleware/auth0')
 const {request} = require('../middleware/requests')
 
-//MODELS
-// const modelUsers = require('../models/users')
-const {add, get, get_all, update, remove, remove_all} = require('../models')
-
 //SETUP
 const router = express.Router()
-const tbl = 'users'
 
 //ROUTES
 
