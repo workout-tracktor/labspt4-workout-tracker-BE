@@ -55,7 +55,7 @@ router.get('/users', data, request,  async (req, res) => {
 
 //UPDATE
 //:update user by id
-router.put('/user', data, id, request, async (req, res) => {
+router.put('/user', data, id, encrypt, request, async (req, res) => {
     res.status(200).json(req.data.response)
 })
 
