@@ -16,6 +16,8 @@ const {merge} = require('../helpers/replace')
 
 //SETTINGS
 const unqiue_fields = {
+    workouts: ['name'],
+    exercises: ['name'],
     equipments: ['name'],
     units: ['name'],
     users: ['username', 'email'],
@@ -24,7 +26,7 @@ const unqiue_fields = {
 //:
 prepare = async (req, res, next) => {
     const he_man = merge(req.data.schema, req.data.body)
-    he_man[req.data.table.slice(0, -1) + '_id'] = uuid.v4()
+    if(!req.data.user_id) he_man[req.data.table.slice(0, -1) + '_id'] = uuid.v4()
     req.data.prepared = he_man
     next()
 }
@@ -73,7 +75,7 @@ data = async (req, res, next) => {
 required = (req, res, next) => {
     const fields_missing = req.data.required.filter(item => !req.data.body.hasOwnProperty(item))
     if(fields_missing.length > 0)
-        res.status(612).json({
+        res.status(609).json({
             error: `Not all required fields are provided.`,
             required: req.data.required,
             missing: fields_missing})
@@ -85,7 +87,7 @@ unique = async (req, res, next) => {
     const in_use = await check.unique(req.data.table, req.data.body, req.data.unique)
     if(in_use.length > 0) {
         const unremarkable_fields = in_use.map(field => Object.keys(field)[0])
-        res.status(612).json({
+        res.status(613).json({
             error: `Unremarkable fields.`,
             unique: req.data.unique,
             unremarkable_fields: unremarkable_fields,
@@ -111,10 +113,10 @@ id = async (req, res, next) => {
             req.data.id = id
             next()
         } else {
-            res.status(612).json({error: `${field} not found.`}) 
+            res.status(614).json({error: `${field} not found.`}) 
         }
     } else {
-        res.status(612).json({error: `${field} not provided.`})
+        res.status(615).json({error: `${field} not provided.`})
     }
 }
 
