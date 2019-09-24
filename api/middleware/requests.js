@@ -15,6 +15,7 @@ request = async (req, res, next) => {
                 req.data.response = req.data.array
                 ? await get_all(req.data.table, {})
                 : await get(req.data.table, req.data.query)
+                if(!req.data.response) return send_error(res, 61203, req.data.table)
             } catch(err) {return send_error(res, err.code, req.data.table)}
             break
         }
