@@ -39,6 +39,7 @@ That's it! Enjoy your stay.
 | weight_units  | int           |               |               |foreign key    |
 |distance_units | int           |               |               |foreign key    |
 | avatar        | str           |               |               |               |
+| body_goal     | str           |               |               |               |
 
 Foreign Keys
 
@@ -52,20 +53,18 @@ Registers a new user </br>
 Requirements in the table
 
 get:/api/user </br>
-Returns complete user object minus id
+Returns complete user
 
 put:/api/user </br>
 Updates a user </br>
-Returns complete user object minus id
+Returns complete user object
 
 delete:/api/user </br>
 returns "the user has been terminated" </br>
-receive either a query /user?user_id=fdskjh&username=billybobthornton or a JSON body {user_id: 'fsfdfs'}
+receive either a query /user?user_id=fdskjh&username=billybobthornton or a JSON body with user ID {user_id: 'fsfdfs'}
 
 get:/api/users </br>
 returns an array of users
-
-delete:/api/user </br>
 
 
 all GET requests take a query ex. /user?username=fsdfsf&weight_units=farts
@@ -84,6 +83,27 @@ Foreign Keys
 
 exercise_id REFERENCES id IN TABLE exercises
 
+Routes
+
+post:/api/workout </br>
+Registers a new workout </br>
+Requirements in the table
+
+get:/api/workout </br>
+Returns complete workout
+
+put:/api/workout </br>
+Updates a workout </br>
+Returns complete workout object
+
+delete:/api/workout </br>
+returns "the workout has been terminated" </br>
+receive either a query /workout?workout_id=fdskjh&name=workout or a JSON body with workout ID {workout_id: 'fsfdfs'}
+
+get:/api/workouts </br>
+returns an array of workouts
+
+
 ### Exercises
 | Column        |     Type      |    Required   |   Unique      |     Key       | 
 | ------------- | ------------- | ------------- | ------------- | ------------- |
@@ -96,6 +116,27 @@ exercise_id REFERENCES id IN TABLE exercises
 Foreign Keys
 
 equipment_id REFERENCES id IN TABLE equipment
+
+Routes
+
+post:/api/exercise </br>
+Registers a new exercise </br>
+Requirements in the table
+
+get:/api/exercise </br>
+Returns complete exercise
+
+put:/api/exersice </br>
+Updates a exercise </br>
+Returns complete exercise object
+
+delete:/api/exercise </br>
+returns "the exercise has been terminated" </br>
+receive either a query /exercise?exercise_id=fdskjh&name=exercisename or a JSON body with exercise ID {exercise_id: 'fsfdfs'}
+
+get:/api/exercises </br>
+returns an array of exercises
+
 
 ### Logs 
 | Column        |     Type      |    Required   |   Unique      |     Key       | 
@@ -129,13 +170,55 @@ weight_units REFERENCES id IN TABLE units
 |name           | str           |  yes          | unique        |               |
 |desc           | str           |  yes          |               |               |
 
+Routes
+
+post:/api/equipment </br>
+Registers a new equipment </br>
+Requirements in the table
+
+get:/api/equipment </br>
+Returns complete equipment
+
+put:/api/equipment </br>
+Updates a equipment </br>
+Returns complete equipment object
+
+delete:/api/equipment </br>
+returns "the equipment has been terminated" </br>
+receive either a query /equipment?equipment_id=fdskjh&name=equipemtname or a JSON body with equipment ID {equipment_id: 'fsfdfs'}
+
+get:/api/equipments </br>
+returns an array of equipments
+
+
 ### Units
 | Column        |     Type      |    Required   |   Unique      |     Key       | 
 | ------------- | ------------- | ------------- | ------------- | ------------- |
 |     id        |  int          |    yes        | unique        | primary key   |
 | unit_id       |  str          |   yes         | unique        |               |
 | name          | str           |  yes          | unique        |               |
-                                                                                 
+  
+  
+Routes
+
+post:/api/unit </br>
+Registers a new unit </br>
+Requirements in the table
+
+get:/api/unit </br>
+Returns complete unit
+
+put:/api/unit </br>
+Updates a unit </br>
+Returns complete unit object
+
+delete:/api/unit </br>
+returns "the unit has been terminated" </br>
+receive either a query /unit?unit_id=fdskjh&name=unitname or a JSON body with unit ID {unit_id: 'fsfdfs'}
+
+get:/api/units </br>
+returns an array of units
+
 
 ## Support
 
