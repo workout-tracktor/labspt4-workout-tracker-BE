@@ -1,3 +1,11 @@
+// __   __  _______  _______  ______           ______    _______  __   __  _______  _______  _______ 
+//|  | |  ||       ||       ||    _ |         |    _ |  |       ||  | |  ||       ||       ||       |
+//|  | |  ||  _____||    ___||   | ||   ____  |   | ||  |   _   ||  | |  ||_     _||    ___||  _____|
+//|  |_|  || |_____ |   |___ |   |_||_ |____| |   |_||_ |  | |  ||  |_|  |  |   |  |   |___ | |_____ 
+//|       ||_____  ||    ___||    __  |       |    __  ||  |_|  ||       |  |   |  |    ___||_____  |
+//|       | _____| ||   |___ |   |  | |       |   |  | ||       ||       |  |   |  |   |___  _____| |
+//|_______||_______||_______||___|  |_|       |___|  |_||_______||_______|  |___|  |_______||_______|
+
 //ENDPOINT: /api
 
 //IMPORTS
@@ -5,74 +13,45 @@ const express = require('express')
 // const remove = require('../helpers/remove')
 
 //MIDDLEWARE
-const {data, required, unique, id, prepare, encrypt} = require('../middleware')
-
-//MODELS
-const modelEquipments = require('../models/equipment')
+const {data, schema, id, prepare} = require('../middleware')
+const {request} = require('../middleware/requests')
 
 //SETUP
 const router = express.Router()
 
 //ROUTES
-//create
+
+//CREATE
 //:add a new equipment
-router.post('/equipment', data, required, unique, prepare, async (req, res) => {
-    try {
-        const equipment = await modelEquipments.add(req.data.prepared)
-        equipment
-        ?   res.status(201).json(equipment)
-        :   res.status(404).json({error: `Equipment couldn't be added.`})
-    } catch (err) {
-        res.status(500).json(err)
-    }
+router.post('/equipment', data, schema, prepare, request, async (req, res) => {
+    res.status(201).json(req.data.response)
 })
 
+//GET
 //:get a single equipment fitting a set of requirements
-router.get('/equipment', data, async (req, res) => {
-    try {
-        const equipment = await modelEquipments.get_by(req.data.query)
-        if(equipment) res.status(200).json(equipment)
-        else res.status(404).json({error: `The database does not have equipment.`})
-    } catch(err) {
-        res.status(500).json(err)
-    }
+router.get('/equipment', data, request, (req, res) => {
+    res.status(200).json(req.data.response)
+})
+//:get all equipments fitting a set of requirements
+router.get('/equipments', data, request,  async (req, res) => {
+    res.status(200).json(req.data.response)
 })
 
-//:get all users fitting a set of requirements
-router.get('/equipments', data, async (req, res) => {
-    try {
-        const equipments = await modelEquipments.get_all_by(req.data.query)
-        if(equipments.length > 0) res.status(200).json(equipments)
-        else res.status(404).json({error: `No equipments found.`}) //include query
-    } catch(err) {
-        res.status(500).json(err)
-    }
+//UPDATE
+//:update equipment by id
+router.put('/equipment', data, id, request, async (req, res) => {
+    res.status(200).json(req.data.response)
 })
 
-//update
-//:
-router.put('/equipment', data, id, async (req, res) => {
-    // console.log(req.data)
-    try {
-        const equipment = await modelEquipments.update_by_id(req.data.id, req.data.body)
-        // console.log('equipment', equipment)
-        if(equipment) res.status(201).json(equipment)
-        else res.status(404).json({error: `Couldn't update equipment.`})
-    } catch(err) {
-        res.status(500).json(err)
-    }
+//DELETE
+//:remove equipment by id
+router.delete('/equipment', data, id, request, async (req, res) => {
+    res.status(200).json(req.data.response)
 })
-
-//delete
-//:
-router.delete('/equipment', data, id, async (req, res) => {
-    try {
-        const equipment = await modelEquipments.remove_by_id(req.data.id, req.data.body)
-        if(equipment) res.status(201).json({success: `equipment has been terminated.`})
-        else res.status(404).json({error: `Couldn't update equipment.`})
-    } catch(err) {
-        res.status(500).json(err)
-    }
+//:remove all equipments
+router.delete('/equipments', data, request, async (req, res) => {
+    // console.log('>>>', req.data)
+    res.status(200).json(req.data.response)
 })
 
 //EXPORTS

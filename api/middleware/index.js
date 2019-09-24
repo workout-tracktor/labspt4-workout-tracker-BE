@@ -13,6 +13,7 @@ const uuid = require('uuid')
 const get = require('../helpers/get')
 const check = require('../helpers/check')
 const {merge} = require('../helpers/replace')
+const {send_error} = require('../helpers/errors')
 
 //SETTINGS
 const unqiue_fields = {
@@ -25,16 +26,16 @@ const unqiue_fields = {
 
 //:
 prepare = async (req, res, next) => {
-    const he_man = merge(req.data.schema, req.data.body)
-    if(!req.data.user_id) he_man[req.data.table.slice(0, -1) + '_id'] = uuid.v4()
-    req.data.prepared = he_man
+    const prepared = merge(req.data.schema, req.data.body)
+    if(!req.data.user_id) prepared[req.data.table.slice(0, -1) + '_id'] = uuid.v4()
+    req.data.prepared = prepared
     next()
 }
 
 //:
 encrypt = (req, res, next) => {
     if(!req.data.body.hasOwnProperty('password'))
-        res.status(612).json({error: `Password is required.`})
+        return send_error(res, 61203, req.data.table, 'password', 'password')
     
     req.data.body.password = crypt.hashSync(req.data.body.password, 1)
 
@@ -56,9 +57,11 @@ data = async (req, res, next) => {
     const required = await get.required(table)
     const body = get.body(columns, req.body)
     const {settings, query} = get.params(columns, req.query)
+    const method = req.method
     
     req.data = {
         table: table,
+        method: method,
         array: array,
         schema: schema,
         required: required,
@@ -71,60 +74,38 @@ data = async (req, res, next) => {
     next()
 }
 
-//:checks to see if all required fields are provided
-required = (req, res, next) => {
+schema = async (req, res, next) => {
+    //check if all required fields are provided
     const fields_missing = req.data.required.filter(item => !req.data.body.hasOwnProperty(item))
-    if(fields_missing.length > 0)
-        res.status(609).json({
-            error: `Not all required fields are provided.`,
-            required: req.data.required,
-            missing: fields_missing})
-    else next()
-}
+    if(fields_missing.length > 0) return send_error(res, 23502, req.data.table, fields_missing, req.data.required)
 
-//:checks each provided unique field to see if they're unique
-unique = async (req, res, next) => {
-    const in_use = await check.unique(req.data.table, req.data.body, req.data.unique)
-    if(in_use.length > 0) {
-        const unremarkable_fields = in_use.map(field => Object.keys(field)[0])
-        res.status(613).json({
-            error: `Unremarkable fields.`,
-            unique: req.data.unique,
-            unremarkable_fields: unremarkable_fields,
-            details: in_use,
-        })
-    } else next()
+    //checks each provided unique field to see if they're unique
+    const unremarkable_fields = (await check.unique(req.data.table, req.data.body, req.data.unique)).map(field => Object.keys(field)[0])
+    if(unremarkable_fields.length > 0) return send_error(res, 23505, req.data.table, unremarkable_fields, req.data.unique)
+
+    next()
 }
 
 //:get id via ?_id from query, or body
 id = async (req, res, next) => {
+    //check if row id was provided
     const field = req.data.table.slice(0, -1) + '_id'
     const field_id = req.data.query[field] ? req.data.query[field] : req.data.body[field]
+    if(!field_id) return send_error(res, 61201, req.data.table, field, field)
+    
+    //check if row with that id exists
+    const id = await get.id(req.data.table, field, field_id)
+    if(!id) return send_error(res, 61202, req.data.table, field, field)
 
-    // if(!field_id) res.status(612).json({error: `${field} not provided.`})
-    // const id = await get.id(req.data.table, field, field_id)
-    // if(!id) res.status(612).json({error: `${field} not found.`})
-    // req.data.id = id
-    // next()
+    req.data.id = id
 
-    if(field_id) {
-        id = await get.id(req.data.table, field, field_id)
-        if(id) {
-            req.data.id = id
-            next()
-        } else {
-            res.status(614).json({error: `${field} not found.`}) 
-        }
-    } else {
-        res.status(615).json({error: `${field} not provided.`})
-    }
+    next()
 }
 
 //EXPORTS
 module.exports = {
     data,
-    required,
-    unique,
+    schema,
     id,
     prepare,
     encrypt,
