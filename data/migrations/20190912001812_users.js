@@ -15,6 +15,7 @@ exports.up = (knex) =>
         tbl.text('email')
             .unique()
             .notNullable()
+        tbl.text('body_goal')
         tbl.text('first_name')
         tbl.text('last_name')
         tbl.integer('weight_units')
