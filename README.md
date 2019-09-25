@@ -61,7 +61,7 @@ Returns complete user object
 
 delete:/api/user </br>
 returns "the user has been terminated" </br>
-receive either a query /user?user_id=fdskjh&username=billybobthornton or a JSON body with user ID {user_id: 'fsfdfs'}
+receive either a query EXAMPLE: /user?user_id=fdskjh&username=billybobthornton or a JSON body with user ID EXAMPLE: {user_id: 'fdskjh'}
 
 get:/api/users </br>
 returns an array of users
@@ -98,7 +98,7 @@ Returns complete workout object
 
 delete:/api/workout </br>
 returns "the workout has been terminated" </br>
-receive either a query /workout?workout_id=fdskjh&name=workout or a JSON body with workout ID {workout_id: 'fsfdfs'}
+receive either a query EXAMPLE: /workout?workout_id=fdskjhh&name=workout or a JSON body with workout ID EXAMPLE: {workout_id: 'fdskjhh'}
 
 get:/api/workouts </br>
 returns an array of workouts
@@ -132,7 +132,7 @@ Returns complete exercise object
 
 delete:/api/exercise </br>
 returns "the exercise has been terminated" </br>
-receive either a query /exercise?exercise_id=fdskjh&name=exercisename or a JSON body with exercise ID {exercise_id: 'fsfdfs'}
+receive either a query EXAMPLE: /exercise?exercise_id=fdskjhi&name=exercisename or a JSON body with exercise ID EXAMPLE: {exercise_id: 'fdskjhi'}
 
 get:/api/exercises </br>
 returns an array of exercises
@@ -185,7 +185,7 @@ Returns complete equipment object
 
 delete:/api/equipment </br>
 returns "the equipment has been terminated" </br>
-receive either a query /equipment?equipment_id=fdskjh&name=equipemtname or a JSON body with equipment ID {equipment_id: 'fsfdfs'}
+receive either a query EXAMPLE: /equipment?equipment_id=fdskjhj&name=equipemtname or a JSON body with equipment ID EXAMPLE: {equipment_id: 'fdskjhj'}
 
 get:/api/equipments </br>
 returns an array of equipments
@@ -214,7 +214,7 @@ Returns complete unit object
 
 delete:/api/unit </br>
 returns "the unit has been terminated" </br>
-receive either a query /unit?unit_id=fdskjh&name=unitname or a JSON body with unit ID {unit_id: 'fsfdfs'}
+receive either a query EXAMPLE: /unit?unit_id=fdskjhk&name=unitname or a JSON body with unit ID EXAMPLE: {unit_id: 'fdskjhk'}
 
 get:/api/units </br>
 returns an array of units
