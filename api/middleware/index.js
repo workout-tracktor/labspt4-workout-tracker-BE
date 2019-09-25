@@ -34,13 +34,10 @@ prepare = async (req, res, next) => {
 
 //:
 encrypt = (req, res, next) => {
-    if(!req.data.body.hasOwnProperty('password'))
-        return send_error(res, 61203, req.data.table, 'password', 'password')
-    else {
-        console.error('made it here')
-        req.data.body.password = crypt.hashSync(req.data.body.password, 1)
-        // console.log('new', req.data.body.password)
-    }
+    if(!req.data.body.hasOwnProperty('password')) {
+        if(req.data.method === 'POST')
+            return send_error(res, 61203, req.data.table, 'password', 'password')
+    } else req.data.body.password = crypt.hashSync(req.data.body.password, 1)
 
     next()
 }
