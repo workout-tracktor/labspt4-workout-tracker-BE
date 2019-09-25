@@ -8,7 +8,9 @@ conversion_therapy = (req, res, next) => {
     if(req.body.nickname) req.body.username = req.body.nickname
     if(req.body.picture) req.body.avatar = req.body.picture
     if(req.body.sub) req.body.user_id = req.body.sub
-    if(!req.body.password) req.body.password = req.body.password = 'drowssap'
+    //if request if from auth0 insert password
+    if(req.body.sub) req.body.password = req.body.password = 'a'
+    
     req.route.path = '/user'
 
     next()
