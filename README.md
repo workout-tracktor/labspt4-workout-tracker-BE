@@ -77,7 +77,7 @@ all GET requests take a query ex. /user?username=fsdfsf&weight_units=farts
 |exercise_id    | int[]         |  yes          |               |foreign key    |
 |exercise_desc  | str[]         |  yes          |               |               |
 | desc          | str           |    yes        |               |               |
-|  complete     | bool          |    yes        |               |               |
+
 
 Foreign Keys
 
@@ -153,6 +153,7 @@ returns an array of exercises
 |duration       | num(float)    |               |               |               |
 |weight         | num(float)    |               |               |               |
 | timestamp     | time          |  yes          |               |               |
+|  complete     | bool          |    yes        |               |               |
 
 Foreign Keys
 
