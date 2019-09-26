@@ -11,6 +11,10 @@ exports.up = (knex) =>
             .unique()
             .notNullable()
         tbl.text('description')
+        tbl.bigint('created_at')
+            .notNullable()
+        tbl.bigint('updated_at')
+            .notNullable()
     })
 
 exports.down = (knex) =>
