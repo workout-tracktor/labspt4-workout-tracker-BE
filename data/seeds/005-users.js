@@ -14,8 +14,8 @@ exports.seed = function(knex) {
           body_goal: "",
           first_name: "",
           last_name: "",
-          weight_units: "",
-          distance_units: "",
+          weight_units: 1,
+          distance_units: 3,
           avatar: "",
           created_at: 111,
           updated_at: 123
