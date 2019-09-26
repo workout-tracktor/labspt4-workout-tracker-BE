@@ -4,10 +4,14 @@ const {send_error} = require('../helpers/errors')
 const {add, get, get_all, update, remove, remove_all} = require('../models')
 
 request = async (req, res, next) => {
+    // console.log(req.data)
     switch(req.data.method) {
         case 'POST': {
             try {req.data.response = await add(req.data.table, req.data.prepared)}
-            catch(err) { return send_error(res, err.code, req.data.table)}
+            catch(err) {
+                console.log(err)
+                return send_error(res, err.code, req.data.table)
+            }
             break
         }
         case 'GET': {

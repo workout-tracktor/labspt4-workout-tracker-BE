@@ -14,6 +14,10 @@ exports.up = (knex) =>
             .references('id')
             .inTable('equipments')
         tbl.text('description')
+        tbl.bigint('created_at')
+            .notNullable()
+        tbl.bigint('updated_at')
+            .notNullable()
     })
 
 exports.down = (knex) =>

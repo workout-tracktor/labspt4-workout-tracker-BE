@@ -10,7 +10,7 @@ const {request} = require('../middleware/requests')
 
 //SETUP
 const router = express.Router()
-const route_name = 'workout'
+const route_name = 'log'
 
 //ROUTES
 //create

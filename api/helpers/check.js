@@ -16,6 +16,7 @@ const db = require('../../data/dbConfig')
 //:maps through remaining fields to check if they're already in the db
 //:returns array of unremarkable key value pairs
 unique = async (table, body, unqiue_fields) => {
+  // console.log(table, body, unqiue_fields)
   let fields_to_check = unqiue_fields.filter(field => body.hasOwnProperty(field))
   const get = async (obj) => await Promise.resolve(db(table).where(obj).first())
   const in_use = (await Promise.all(fields_to_check.map(async item => {
