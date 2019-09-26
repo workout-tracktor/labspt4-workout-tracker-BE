@@ -25,7 +25,7 @@ columns = async table => {
 }
 
 required = async table => {
-    const not_required = ['id', table.slice(0, -1) + '_id', 'timestamp', 'created'] //move this to middleware
+    const not_required = ['id', table.slice(0, -1) + '_id', 'timestamp'] //move this to middleware
     const schema = await db(table).columnInfo()
     let required = []
     for(let key in schema) if(!schema[key].nullable) required.push(key)

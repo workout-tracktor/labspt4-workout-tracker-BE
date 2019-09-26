@@ -22,6 +22,7 @@ const unqiue_fields = {
     equipments: ['name'],
     units: ['name'],
     users: ['username', 'email'],
+    logs: [],
 }
 
 //:
@@ -29,6 +30,8 @@ prepare = async (req, res, next) => {
     const prepared = merge(req.data.schema, req.data.body)
     if(!req.data.user_id) prepared[req.data.table.slice(0, -1) + '_id'] = uuid.v4()
     req.data.prepared = prepared
+
+
     next()
 }
 
@@ -58,6 +61,9 @@ data = async (req, res, next) => {
     const body = get.body(columns, req.body)
     const {settings, query} = get.params(columns, req.query)
     const method = req.method
+    const time = (new Date()).getTime()
+    body.created_at = time
+    body.updated_at = time
     
     req.data = {
         table: table,
@@ -69,7 +75,10 @@ data = async (req, res, next) => {
         unique: unqiue_fields[table],
         query: query,
         body: body,
+        time: time,
     }
+
+    // console.log(req.data)
 
     next()
 }
@@ -82,7 +91,7 @@ schema = async (req, res, next) => {
     //checks each provided unique field to see if they're unique
     const unremarkable_fields = (await check.unique(req.data.table, req.data.body, req.data.unique)).map(field => Object.keys(field)[0])
     if(unremarkable_fields.length > 0) return send_error(res, 23505, req.data.table, unremarkable_fields, req.data.unique)
-
+    
     next()
 }
 
