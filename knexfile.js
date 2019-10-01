@@ -1,6 +1,21 @@
 require('dotenv').config()
 
 module.exports = {
+  testing: {
+    client: 'postgres',
+    connection: {
+      host: process.env.DB_HOST,
+      database: 'testing',
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD
+    },
+    migrations: {
+      directory: './data/migrations'
+    },
+    seeds: {
+      directory: './data/seeds'
+    }
+  },
   development: {
     client: 'postgres',
     connection: {

@@ -25,7 +25,7 @@ const send_error = (res, code, table, fields, expected) => {
         case '61202': error.status = 404; error.detail = `${fields} could not be found.`; break
         case '61203': error.status = 404; error.detail = `Nope, Waldo's not here.`; break
         //default
-        default: error.status = 613; error.detail = `Backend broked, unknown error.`
+        default: error.status = 612; error.detail = `Backend broked, unknown error.`
     }
 
     res.status(error.status).json(error)
