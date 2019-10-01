@@ -1,0 +1,6 @@
+PORT=4444
+DB_HOST=127.0.0.1
+DB_USER=postgres
+DB_PASSWORD=yourpgadminpassword
+DB_NAME=testing
+DB_ENV=development
