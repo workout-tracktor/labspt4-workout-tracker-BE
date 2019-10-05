@@ -13,9 +13,11 @@ const express = require('express')
 // const remove = require('../helpers/remove')
 
 //MIDDLEWARE
-const {data, schema, id, prepare, encrypt} = require('../middleware')
+const {data, schema, id, prepare, prepare2, encrypt} = require('../middleware')
 const {conversion_therapy} = require('../middleware/auth0')
 const {request} = require('../middleware/requests')
+
+
 
 //SETUP
 const router = express.Router()
@@ -45,7 +47,7 @@ router.post('/user', conversion_therapy, data, schema, encrypt, prepare, request
 
 //GET
 //:get a single user fitting a set of requirements
-router.get('/user', data, request, (req, res) => {
+router.get('/user', data, request, prepare2, (req, res) => {
     res.status(200).json(req.data.response)
 })
 //:get all users fitting a set of requirements

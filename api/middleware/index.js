@@ -15,6 +15,10 @@ const check = require('../helpers/check')
 const {merge} = require('../helpers/replace')
 const {send_error} = require('../helpers/errors')
 
+const models = require('../models')
+
+const {responses} = require('../../config/resobj')
+
 //SETTINGS
 const unqiue_fields = {
     workouts: ['name'],
@@ -23,6 +27,79 @@ const unqiue_fields = {
     units: ['name'],
     users: ['username', 'email'],
     logs: [],
+}
+
+
+//:
+recurssion = async (struct, values, table) => {
+    // console.log('struct', struct)
+    // console.log('values', values)
+    const res = {}
+    for(const key of Object.keys(struct)) {
+        const type = Array.isArray(struct[key]) ?  'array' : typeof struct[key]
+        const tbl = key.split('_')[key.split('_').length-1]
+        switch(type) {
+            case 'string': {
+                if(struct[key]) res[key] = (await models.get(tbl, {id: values[key]}))[struct[key]]
+                else res[key] = values[key]
+                break
+            }
+            case 'object': {
+                const row = await models.get(tbl, {id: values[key]})
+                res[key] = await recurssion(struct[key], row)
+                break
+            }
+            case 'array': {
+                const row = await models.
+                break
+            }
+        }
+
+
+        // if(struct[key] === '') {
+        //     if(values[key]) res[key] = values[key]
+        //     else res[key] = null
+        // } else {
+        //     //pull from db, values[key] = id of row returned
+        //     const table = key.split('_')[key.split('_').length-1]
+        //     console.log('table', table)
+        //     const row = await models.get(table, {id: values[key]})
+        //     // console.log(key, table, {id: values[key]})
+        //     switch(typeof struct[key]) {
+        //         case 'object': res[key] = recurssion(struct[key], row, table); break
+        //         // case 'array': console.log('yerp'); break
+        //         // default: console.log(typeof struct[key])
+        //     }
+        // }
+    }
+    return res
+}
+
+
+prepare2 = async (req, res, next) => {
+    // console.log('made it here')
+    //what should be sent back
+    const struct = responses[req.data.table]
+    const dbres = req.data.response
+    // console.log('str', struct)
+    // console.log('dat', dbres)
+
+    try {
+        req.data.response = await recurssion(struct, dbres)
+    } catch(err) {
+        console.log(err)
+    }
+    // for(const key of Object.keys(struct)) {
+    //     switch(typeof struct[key]) {
+    //         case 'string':
+    //             if(struct[key] === '') struct[key] = dbres[key]
+    //             else struct[key] = (await models.get((key.split('_')[key.split('_').length - 1]), {id: dbres.id}))[struct[key]]
+    //         break
+    //     }
+    // }
+
+    // console.log('res', struct)
+    next()
 }
 
 //:
@@ -62,8 +139,8 @@ data = async (req, res, next) => {
     const {settings, query} = get.params(columns, req.query)
     const method = req.method
     const time = (new Date()).getTime()
-    body.created_at = time
-    body.updated_at = time
+    body.created = time
+    body.updated = time
     
     req.data = {
         table: table,
@@ -117,5 +194,6 @@ module.exports = {
     schema,
     id,
     prepare,
+    prepare2,
     encrypt,
 }
