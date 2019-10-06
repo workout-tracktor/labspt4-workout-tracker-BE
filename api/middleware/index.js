@@ -31,9 +31,7 @@ const unqiue_fields = {
 
 
 //:
-recurssion = async (struct, values, table) => {
-    // console.log('struct', struct)
-    // console.log('values', values)
+recurssion = async (struct, values) => {
     const res = {}
     for(const key of Object.keys(struct)) {
         const type = Array.isArray(struct[key]) ?  'array' : typeof struct[key]
@@ -52,13 +50,21 @@ recurssion = async (struct, values, table) => {
             case 'array': {
                 const rows = await models.get_all(tbl, {})
                 res[key] = []
-                console.log('1', res[key])
-                rows.forEach(async row => {
-                    const that = await recurssion(struct[key][0], row, tbl)
-                    console.log('that', that)
-                    res[key].push(that)
-                })
-                console.log('arr', res[key])
+                switch(typeof struct[key][0]) {
+                    case 'string': {
+                        for(const idx in rows) {
+                            res[key].push((await recurssion({[struct[key][0]]: ''}, rows[idx], tbl))[struct[key][0]])
+                        }
+                        break;
+                    }
+                    case 'object': {
+                        for(const idx in rows) {
+                            const that = await recurssion(struct[key][0], rows[idx], tbl)
+                            res[key].push(that)
+                        }
+                        break;
+                    }
+                }
                 break
             }
         }
@@ -76,7 +82,7 @@ prepare2 = async (req, res, next) => {
     } catch(err) {
         console.log(err)
     }
-    // console.log('res', req.data.response)
+    console.log('res', req.data.response)
     next()
 }
 

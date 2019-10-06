@@ -7,8 +7,7 @@ const responses = {
         first_name: '',
         last_name: '',
         weight_units: 'name',
-        // weight_units: {table: 'units', fields: ['name'], type: 'string'},
-        distance_units: [{name: '', unit_id: ''}],
+        distance_units: ['name'],
         avatar: '',
         created: '',
         updated: ''
