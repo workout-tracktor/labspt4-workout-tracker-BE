@@ -50,17 +50,15 @@ recurssion = async (struct, values, table) => {
                 break
             }
             case 'array': {
-                console.log('tbl', tbl)
                 const rows = await models.get_all(tbl, {})
-                const arr = []
+                res[key] = []
+                console.log('1', res[key])
                 rows.forEach(async row => {
-                    // console.log('row', row)
-                    // console.log('tbl', tbl)
-                    // console.log('val', struct[key][0])
-                    arr.push(await recurssion(struct[key][0], row, tbl))
-                    // console.log(res)
+                    const that = await recurssion(struct[key][0], row, tbl)
+                    console.log('that', that)
+                    res[key].push(that)
                 })
-                console.log('arr', arr)
+                console.log('arr', res[key])
                 break
             }
         }
