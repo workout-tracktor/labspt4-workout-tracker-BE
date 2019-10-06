@@ -13,7 +13,8 @@ const express = require('express')
 // const remove = require('../helpers/remove')
 
 //MIDDLEWARE
-const {data, schema, id, prepare, prepare2, encrypt} = require('../middleware')
+const {data, schema, id, prepare, encrypt} = require('../middleware')
+const {prepare2} = require('../middleware/prepare')
 const {conversion_therapy} = require('../middleware/auth0')
 const {request} = require('../middleware/requests')
 
