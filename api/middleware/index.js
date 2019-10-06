@@ -25,6 +25,62 @@ const unqiue_fields = {
     logs: [],
 }
 
+// //:
+// recurssion = async (struct, values) => {
+//     const res = {}
+//     for(const key of Object.keys(struct)) {
+//         const type = Array.isArray(struct[key]) ?  'array' : typeof struct[key]
+//         const tbl = key.split('_')[key.split('_').length-1]
+//         switch(type) {
+//             case 'string': {
+//                 if(struct[key]) res[key] = (await models.get(tbl, {id: values[key]}))[struct[key]]
+//                 else res[key] = values[key]
+//                 break
+//             }
+//             case 'object': {
+//                 const row = await models.get(tbl, {id: values[key]})
+//                 res[key] = await recurssion(struct[key], row)
+//                 break
+//             }
+//             case 'array': {
+//                 const rows = await models.get_all(tbl, {})
+//                 res[key] = []
+//                 switch(typeof struct[key][0]) {
+//                     case 'string': {
+//                         for(const idx in rows) {
+//                             res[key].push((await recurssion({[struct[key][0]]: ''}, rows[idx], tbl))[struct[key][0]])
+//                         }
+//                         break;
+//                     }
+//                     case 'object': {
+//                         for(const idx in rows) {
+//                             const that = await recurssion(struct[key][0], rows[idx], tbl)
+//                             res[key].push(that)
+//                         }
+//                         break;
+//                     }
+//                 }
+//                 break
+//             }
+//         }
+//     }
+//     return res
+// }
+
+
+// prepare2 = async (req, res, next) => {
+//     const struct = responses[req.data.table]
+//     const dbres = req.data.response
+
+//     try {
+//         req.data.response = await recurssion(struct, dbres)
+//     } catch(err) {
+//         console.log(err)
+//     }
+//     console.log('res', req.data.response)
+//     next()
+// }
+
 //:
 prepare = async (req, res, next) => {
     const prepared = merge(req.data.schema, req.data.body)
@@ -62,8 +118,8 @@ data = async (req, res, next) => {
     const {settings, query} = get.params(columns, req.query)
     const method = req.method
     const time = (new Date()).getTime()
-    body.created_at = time
-    body.updated_at = time
+    body.created = time
+    body.updated = time
     
     req.data = {
         table: table,
