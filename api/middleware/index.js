@@ -50,55 +50,35 @@ recurssion = async (struct, values, table) => {
                 break
             }
             case 'array': {
-                const row = await models.
+                console.log('tbl', tbl)
+                const rows = await models.get_all(tbl, {})
+                const arr = []
+                rows.forEach(async row => {
+                    // console.log('row', row)
+                    // console.log('tbl', tbl)
+                    // console.log('val', struct[key][0])
+                    arr.push(await recurssion(struct[key][0], row, tbl))
+                    // console.log(res)
+                })
+                console.log('arr', arr)
                 break
             }
         }
-
-
-        // if(struct[key] === '') {
-        //     if(values[key]) res[key] = values[key]
-        //     else res[key] = null
-        // } else {
-        //     //pull from db, values[key] = id of row returned
-        //     const table = key.split('_')[key.split('_').length-1]
-        //     console.log('table', table)
-        //     const row = await models.get(table, {id: values[key]})
-        //     // console.log(key, table, {id: values[key]})
-        //     switch(typeof struct[key]) {
-        //         case 'object': res[key] = recurssion(struct[key], row, table); break
-        //         // case 'array': console.log('yerp'); break
-        //         // default: console.log(typeof struct[key])
-        //     }
-        // }
     }
     return res
 }
 
 
 prepare2 = async (req, res, next) => {
-    // console.log('made it here')
-    //what should be sent back
     const struct = responses[req.data.table]
     const dbres = req.data.response
-    // console.log('str', struct)
-    // console.log('dat', dbres)
 
     try {
         req.data.response = await recurssion(struct, dbres)
     } catch(err) {
         console.log(err)
     }
-    // for(const key of Object.keys(struct)) {
-    //     switch(typeof struct[key]) {
-    //         case 'string':
-    //             if(struct[key] === '') struct[key] = dbres[key]
-    //             else struct[key] = (await models.get((key.split('_')[key.split('_').length - 1]), {id: dbres.id}))[struct[key]]
-    //         break
-    //     }
-    // }
-
-    // console.log('res', struct)
+    // console.log('res', req.data.response)
     next()
 }
 
