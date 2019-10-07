@@ -13,7 +13,7 @@ const express = require('express')
 // const remove = require('../helpers/remove')
 
 //MIDDLEWARE
-const {data, schema, id, prepare} = require('../middleware')
+const {schema, id, prepare} = require('../middleware')
 const {request} = require('../middleware/requests')
 
 //SETUP
@@ -23,33 +23,33 @@ const router = express.Router()
 
 //CREATE
 //:add a new equipment
-router.post('/equipment', data, schema, prepare, request, async (req, res) => {
+router.post('/equipment', schema, prepare, request, async (req, res) => {
     res.status(201).json(req.data.response)
 })
 
 //GET
 //:get a single equipment fitting a set of requirements
-router.get('/equipment', data, request, (req, res) => {
+router.get('/equipment', request, (req, res) => {
     res.status(200).json(req.data.response)
 })
 //:get all equipments fitting a set of requirements
-router.get('/equipments', data, request,  async (req, res) => {
+router.get('/equipments', request,  async (req, res) => {
     res.status(200).json(req.data.response)
 })
 
 //UPDATE
 //:update equipment by id
-router.put('/equipment', data, id, request, async (req, res) => {
+router.put('/equipment', id, request, async (req, res) => {
     res.status(200).json(req.data.response)
 })
 
 //DELETE
 //:remove equipment by id
-router.delete('/equipment', data, id, request, async (req, res) => {
+router.delete('/equipment', id, request, async (req, res) => {
     res.status(200).json(req.data.response)
 })
 //:remove all equipments
-router.delete('/equipments', data, request, async (req, res) => {
+router.delete('/equipments', request, async (req, res) => {
     // console.log('>>>', req.data)
     res.status(200).json(req.data.response)
 })

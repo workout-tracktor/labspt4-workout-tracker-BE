@@ -13,7 +13,7 @@ const express = require('express')
 // const remove = require('../helpers/remove')
 
 //MIDDLEWARE
-const {data, schema, id, prepare} = require('../middleware')
+const {schema, id, prepare} = require('../middleware')
 const {request} = require('../middleware/requests')
 
 //SETUP
@@ -23,33 +23,33 @@ const router = express.Router()
 
 //CREATE
 //:add a new unit
-router.post('/unit', data, schema, prepare, request, async (req, res) => {
+router.post('/unit', schema, prepare, request, async (req, res) => {
     res.status(201).json(req.data.response)
 })
 
 //GET
 //:get a single unit fitting a set of requirements
-router.get('/unit', data, request, (req, res) => {
+router.get('/unit', request, (req, res) => {
     res.status(200).json(req.data.response)
 })
 //:get all units fitting a set of requirements
-router.get('/units', data, request,  async (req, res) => {
+router.get('/units', request,  async (req, res) => {
     res.status(200).json(req.data.response)
 })
 
 //UPDATE
 //:update unit by id
-router.put('/unit', data, id, request, async (req, res) => {
+router.put('/unit', id, request, async (req, res) => {
     res.status(200).json(req.data.response)
 })
 
 //DELETE
 //:remove unit by id
-router.delete('/unit', data, id, request, async (req, res) => {
+router.delete('/unit', id, request, async (req, res) => {
     res.status(200).json(req.data.response)
 })
 //:remove all units
-router.delete('/units', data, request, async (req, res) => {
+router.delete('/units', request, async (req, res) => {
     // console.log('>>>', req.data)
     res.status(200).json(req.data.response)
 })

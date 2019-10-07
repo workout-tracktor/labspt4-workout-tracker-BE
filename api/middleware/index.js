@@ -15,15 +15,6 @@ const check = require('../helpers/check')
 const {merge} = require('../helpers/replace')
 const {send_error} = require('../helpers/errors')
 
-//SETTINGS
-const unqiue_fields = {
-    workouts: ['name'],
-    exercises: ['name'],
-    equipments: ['name'],
-    units: ['name'],
-    users: ['username', 'email'],
-    logs: [],
-}
 
 //:
 prepare = async (req, res, next) => {
@@ -53,35 +44,6 @@ encrypt = (req, res, next) => {
 //: Adds in unique field array
 //: Creates a query and settings object object for easier db calls
 //: Checks if the the request is for a single object or array of objects
-data = async (req, res, next) => {
-    const {array, table} = get.path(req.route.path)
-    const columns = await get.columns(table)
-    const schema = get.schema(columns)
-    const required = await get.required(table)
-    const body = get.body(columns, req.body)
-    const {settings, query} = get.params(columns, req.query)
-    const method = req.method
-    const time = (new Date()).getTime()
-    body.created_at = time
-    body.updated_at = time
-    
-    req.data = {
-        table: table,
-        method: method,
-        array: array,
-        schema: schema,
-        required: required,
-        settings: settings,
-        unique: unqiue_fields[table],
-        query: query,
-        body: body,
-        time: time,
-    }
-
-    // console.log(req.data)
-
-    next()
-}
 
 schema = async (req, res, next) => {
     //check if all required fields are provided
@@ -113,7 +75,6 @@ id = async (req, res, next) => {
 
 //EXPORTS
 module.exports = {
-    data,
     schema,
     id,
     prepare,
