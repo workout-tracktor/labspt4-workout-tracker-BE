@@ -4,6 +4,7 @@ const cors = require('cors')
 const helmet = require('helmet')
 //local
 const {data} = require('../api/middleware/data')
+const {convert_id} = require('../api/middleware/convert_id')
 
 //SETUP
 const server = express()
@@ -29,6 +30,7 @@ server.use(helmet())        //security
 server.use(cors(corsOptions))          //ensures front and back end can work on the same machine
 server.use(express.json())  //json all the things!
 server.use(data)
+server.use(convert_id)
 
 //START ROUTES
 routes.forEach(route => server.use('/api', route))
