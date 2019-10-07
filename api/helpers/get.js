@@ -10,7 +10,7 @@ schema = columns =>
         .reduce((obj,val) => (obj[val]=null,obj), {})
 
 path = path => {
-    let table = path.substr(1)
+    let table = path.split('/')[2].split('?')[0]
     let array = true
     if(table.substr(table.length - 1) !== 's') {
         table += 's'

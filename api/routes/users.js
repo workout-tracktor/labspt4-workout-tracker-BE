@@ -13,7 +13,7 @@ const express = require('express')
 // const remove = require('../helpers/remove')
 
 //MIDDLEWARE
-const {data, schema, id, prepare, encrypt} = require('../middleware')
+const {schema, id, prepare, encrypt} = require('../middleware')
 const {conversion_therapy} = require('../middleware/auth0')
 const {request} = require('../middleware/requests')
 
@@ -45,27 +45,28 @@ router.post('/user', conversion_therapy, data, schema, encrypt, prepare, request
 
 //GET
 //:get a single user fitting a set of requirements
-router.get('/user', data, request, (req, res) => {
+router.get('/user', request, (req, res) => {
+    // console.log('data', req.data)
     res.status(200).json(req.data.response)
 })
 //:get all users fitting a set of requirements
-router.get('/users', data, request,  async (req, res) => {
+router.get('/users', request,  async (req, res) => {
     res.status(200).json(req.data.response)
 })
 
 //UPDATE
 //:update user by id
-router.put('/user', data, id, encrypt, request, async (req, res) => {
+router.put('/user', id, encrypt, request, async (req, res) => {
     res.status(200).json(req.data.response)
 })
 
 //DELETE
 //:remove user by id
-router.delete('/user', data, id, request, async (req, res) => {
+router.delete('/user', id, request, async (req, res) => {
     res.status(200).json(req.data.response)
 })
 //:remove all users
-router.delete('/users', data, request, async (req, res) => {
+router.delete('/users', request, async (req, res) => {
     // console.log('>>>', req.data)
     res.status(200).json(req.data.response)
 })
