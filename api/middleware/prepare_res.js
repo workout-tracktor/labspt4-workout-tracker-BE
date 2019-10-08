@@ -42,7 +42,7 @@ const fill_struct = async (struct, values) => {
     return res
 }
 
-prepare = async (req, res, next) => {
+prepare_res = async (req, res, next) => {
     const struct = responses[req.data.table]
     const dbres = req.data.response
 
@@ -57,5 +57,5 @@ prepare = async (req, res, next) => {
 
 //EXPORTS
 module.exports = {
-    prepare
+    prepare_res
 }

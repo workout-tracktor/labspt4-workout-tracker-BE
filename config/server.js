@@ -6,6 +6,7 @@ const helmet = require('helmet')
 const {data} = require('../api/middleware/data')
 // const {convert_id} = require('../api/middleware/convert_id')
 const {constraints} = require('../api/middleware/constraints')
+const {encrypt} = require('../api/middleware/encrypt')
 
 //SETUP
 const server = express()
@@ -32,6 +33,7 @@ server.use(cors(corsOptions))          //ensures front and back end can work on 
 server.use(express.json())  //json all the things!
 server.use(data)
 server.use(constraints)
+server.use(encrypt)
 // server.use(convert_id)
 
 //START ROUTES

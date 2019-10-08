@@ -23,25 +23,27 @@ const router = express.Router()
 //ROUTES
 
 //CREATE
+
 //:add a new user
-router.post('/user', conversion_therapy, data, schema, encrypt, prepare, request, async (req, res) => {
-    //conversion_therapy
-    //:converts an auth0 request into a normal signup request
-    //data
-    //:collects all information about the request and stores it into req.data
-    //:it's table name, table schema, required fields, unique fields, if it's an array, etc
-    //schema
-    //:chcecks if required fields are provided and unique fields are unqiue
-    //encrypt
-    //:encrypts the given password
-    //prepare
-    //:prepares req.data.body to be inserted into the database
-    //request
-    //:makes the database request
-    //response
-    //:return database response to client
-    res.status(201).json(req.data.response)
-})
+
+// router.post('/user', conversion_therapy, prepare, request, async (req, res) => {
+//     //conversion_therapy
+//     //:converts an auth0 request into a normal signup request
+//     //data
+//     //:collects all information about the request and stores it into req.data
+//     //:it's table name, table schema, required fields, unique fields, if it's an array, etc
+//     //schema
+//     //:chcecks if required fields are provided and unique fields are unqiue
+//     //encrypt
+//     //:encrypts the given password
+//     //prepare
+//     //:prepares req.data.body to be inserted into the database
+//     //request
+//     //:makes the database request
+//     //response
+//     //:return database response to client
+//     res.status(201).json(req.data.response)
+// })
 
 //GET
 //:get a single user fitting a set of requirements

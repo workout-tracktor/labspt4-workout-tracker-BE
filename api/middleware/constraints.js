@@ -24,6 +24,17 @@ const unique = async (table, body) => {
     return {unique_fields: unique_fields, unremarkable_fields: unremarkable_fields}
 }
 
+const id = async (table, body, query) => {
+    const field_name = table.slice(0,-1) + '_id'
+    if(query[field_name]) {
+        const that = await get.id(table, field_name, query[field_name])
+        console.log('t', that)
+    }
+    // const field_id = query[field_name] ? query[field_name] : body[field_name]
+    // console.log(field_name)
+    // console.log('f', field_id)
+}
+
 const constraints = async (req, res, next) => {
     switch(req.method) {
         case 'POST': {
@@ -33,14 +44,16 @@ const constraints = async (req, res, next) => {
 
             //check if all unique fields are in fact unique
             const {unique_fields, unremarkable_fields} = await unique(req.data.table, req.body)
-            if(unique_fields.length) return send_error(res, '23505', req.data.table, unique_fields, unremarkable_fields)
+            if(unremarkable_fields.length) return send_error(res, '23505', req.data.table, unique_fields, unremarkable_fields)
             break
         }
         case 'GET': next(); break
-        case 'PUT': console.log('PUT'); break
-        case 'DELETE': console.log('DELETE'); break
+        case 'PUT':
+        case 'DELETE': {
+            id(req.data.table, req.body, req.query)
+            break
+        }
     }
-    console.log('made it here')
     next()
 }
 
