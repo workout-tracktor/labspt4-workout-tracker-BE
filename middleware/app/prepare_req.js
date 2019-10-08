@@ -1,7 +1,7 @@
-const {merge} = require('../helpers/replace')
+const {merge} = require('../../api/helpers/replace')
 const uuid = require('uuid')
 
-const prepare_req = (req, res, next) => {
+module.exports = (req, res, next) => {
     switch(req.method) {
         case 'POST': {
             if(req.data.table === 'users') req.body.user_id = uuid.v4()
@@ -15,8 +15,4 @@ const prepare_req = (req, res, next) => {
     }
 
     next()
-}
-
-module.exports = {
-    prepare_req
 }

@@ -2,47 +2,24 @@
 const express = require("express")
 const cors = require('cors')
 const helmet = require('helmet')
-//local
-const {data} = require('../api/middleware/data')
-// const {convert_id} = require('../api/middleware/convert_id')
-const {constraints} = require('../api/middleware/constraints')
-const {encrypt} = require('../api/middleware/encrypt')
-const {prepare_req} = require('../api/middleware/prepare_req')
 
 //SETUP
 const server = express()
 
-//DEFINE ROUTES
-const routes = [
-    require('../api/routes/users'),
-    require('../api/routes/units'),
-    require('../api/routes/equipment'),
-    require('../api/routes/exercises'),
-    require('../api/routes/workouts'),
-    require('../api/routes/logs')
-]
-
-//trying something
-var corsOptions = {
-    origin: '*',
-    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-   }
-
-//PRE MIDDLEWARE
+//IMPORTED MIDDLEWARE
 server.use(helmet())        //security
-server.use(cors(corsOptions))          //ensures front and back end can work on the same machine
+server.use(cors())          //ensures front and back end can work on the same machine
 server.use(express.json())  //json all the things!
-server.use(data)
-server.use(constraints)
-server.use(encrypt)
-server.use(prepare_req)
-// server.use(convert_id)
 
-//START ROUTES
-routes.forEach(route => server.use('/api', route))
-
-//POST MIDDLEWARE
-//:aint got nothin'
+//APP Middleware
+//:Add these the order you want to use them
+const warez = [
+    require('../middleware/app/data'),
+    require('../middleware/app/constraints'),
+    require('../middleware/app/encrypt'),
+    require('../middleware/app/prepare_req'),
+]
+warez.forEach(ware => server.use(ware))
 
 //API IS ONLINE NOTIFICATION
 server.get('/', (req, res) =>

@@ -6,10 +6,10 @@ Checks to see if post requests have both required and unique fields.
 Checks put and delete for id field
 */
 //imports
-const get = require('../helpers/get')
-const check = require('../helpers/check')
+const get = require('../../api/helpers/get')
+const check = require('../../api/helpers/check')
 const {unqiue_fields} = require('../../config/unique_fields')
-const {send_error} = require('../helpers/errors')
+const {send_error} = require('../../api/helpers/errors')
 
 const requirements = async (table, body) => {
     const not_required = ['created', 'updated']
@@ -35,7 +35,7 @@ const id = async (table, body, query) => {
     // console.log('f', field_id)
 }
 
-const constraints = async (req, res, next) => {
+module.exports =  async (req, res, next) => {
     switch(req.method) {
         case 'POST': {
             //check if all required fields are present
@@ -55,8 +55,4 @@ const constraints = async (req, res, next) => {
         }
     }
     next()
-}
-
-module.exports = {
-    constraints
 }

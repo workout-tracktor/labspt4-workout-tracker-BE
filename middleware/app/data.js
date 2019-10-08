@@ -11,11 +11,11 @@
 
 */
 //imports
-const get = require('../helpers/get')
+const get = require('../../api/helpers/get')
 const {unqiue_fields} = require('../../config/unique_fields')
 
 //content
-data = async (req, res, next) => {
+module.exports = async (req, res, next) => {
     const {array, table} = get.path(req.originalUrl)
     const columns = await get.columns(table)
     const schema = get.schema(columns)
@@ -39,9 +39,4 @@ data = async (req, res, next) => {
     }
 
     next()
-}
-
-//exports
-module.exports = {
-    data
 }
