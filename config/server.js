@@ -7,6 +7,7 @@ const {data} = require('../api/middleware/data')
 // const {convert_id} = require('../api/middleware/convert_id')
 const {constraints} = require('../api/middleware/constraints')
 const {encrypt} = require('../api/middleware/encrypt')
+const {prepare_req} = require('../api/middleware/prepare_req')
 
 //SETUP
 const server = express()
@@ -34,6 +35,7 @@ server.use(express.json())  //json all the things!
 server.use(data)
 server.use(constraints)
 server.use(encrypt)
+server.use(prepare_req)
 // server.use(convert_id)
 
 //START ROUTES
