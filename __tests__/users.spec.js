@@ -18,7 +18,7 @@ describe('GET /users', () => {
               done()
             })
           }).catch(err => done(err))
-    })
+    });
 
     it('should return all users in the db', async () => {
         // add user
@@ -31,6 +31,15 @@ describe('GET /users', () => {
                 email: "lijones@gmail.com",
                 created: "1570585236381",
                 updated: "1570585236381"
+            },
+            {
+                id: 2,
+                user_id: "2",
+                username: "lijones",
+                password: "test",
+                email: "jones@gmail.com",
+                created: "1570585236381",
+                updated: "1570585236381"
             }
         ];
 
@@ -38,7 +47,51 @@ describe('GET /users', () => {
 
         const res = await request(server).get('/api/users');
         expect(res.status).toBe(200);
-        expect(res.body).toHaveLength(1);
-    })
+        expect(res.body).toHaveLength(2);
+        expect(res.body[1].username).toBe('lijones');
+    });
 
+});
+
+describe('getUserById', () => {
+    // cleanup for db
+    beforeEach(done => {
+        knex.migrate.rollback()
+          .then(() => {
+            knex.migrate.latest()
+            .then(() => {
+              done()
+            })
+          }).catch(err => done(err))
+    });
+
+    it('finds a user by id', async () => {
+
+        const user = [
+            {
+                id: 1,
+                user_id: "1",
+                username: "Msmith9",
+                password: "test",
+                email: "smith5w@gmail.com",
+                created: "1570585236381",
+                updated: "1570585236381"
+            },
+            {
+                id: 2,
+                user_id: "2",
+                username: "lijones",
+                password: "test",
+                email: "jones@gmail.com",
+                created: "1570585236381",
+                updated: "1570585236381"
+            }
+        ];
+
+        await db('users').insert(user);
+
+        const res = await request(server).get(`/api/user?user_id=${user[0].user_id}`);
+
+        expect(res.body.username).toEqual("Msmith9");
+    });
 });
