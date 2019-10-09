@@ -36,6 +36,7 @@ const id = async (table, body, query) => {
 }
 
 module.exports =  async (req, res, next) => {
+
     switch(req.method) {
         case 'POST': {
             //check if all required fields are present

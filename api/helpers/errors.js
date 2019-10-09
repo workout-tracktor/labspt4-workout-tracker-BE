@@ -24,6 +24,8 @@ const send_error = (res, code, table, fields, expected) => {
         case '61201': error.status = 406; error.detail = `Was not given a ${fields} field.`; break
         case '61202': error.status = 404; error.detail = `${fields} could not be found.`; break
         case '61203': error.status = 404; error.detail = `Nope, Waldo's not here.`; break
+        case '61204': error.status = 500; error.detail = `Opps! Database didn't return anything. Please contact your network administrator (501) 623-8880.`
+        //please contact sales
         //default
         default: error.status = 612; error.detail = `Backend broked, unknown error.`
     }
