@@ -1,14 +1,10 @@
-//IMPORT MIDDLEWARE
-const express = require("express")
-const cors = require('cors')
-const helmet = require('helmet')
-
 //SETUP
+const express = require("express")
 const server = express()
 
-//IMPORTED MIDDLEWARE
-server.use(helmet())        //security
-server.use(cors())          //ensures front and back end can work on the same machine
+//IMPORT AND USE MIDDLEWARE
+server.use(require('cors')())
+server.use(require('helmet')())
 server.use(express.json())  //json all the things!
 
 //APP Middleware
@@ -18,6 +14,8 @@ const warez = [
     require('../middleware/app/constraints'),
     require('../middleware/app/encrypt'),
     require('../middleware/app/prepare_req'),
+    require('../middleware/app/make_req'),
+    require('../middleware/app/send_resp')
 ]
 warez.forEach(ware => server.use(ware))
 
