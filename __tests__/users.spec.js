@@ -1,25 +1,31 @@
 const request = require('supertest');
 const server =require('../config/server.js');
 const db = require('../data/dbConfig.js');
-const knex = require('knex');
+
+process.env.NODE_ENV = 'testing';
+
+const dbConfig = require('../knexfile.js')[process.env.NODE_ENV];
+const knex = require('knex')(dbConfig);
 
 
 describe('GET /users', () => {
     // cleanup for db
-    afterEach(async () => {
-        // knex.raw('SET foreign_key_checks = 0');
-        await db('users').truncate();
-        // knex.raw('SET foreign_key_checks = 1');
-    });
+    beforeEach(done => {
+        knex.migrate.rollback()
+          .then(() => {
+            knex.migrate.latest()
+            .then(() => {
+              done()
+            })
+          }).catch(err => done(err))
+    })
 
     it('should return all users in the db', async () => {
-        await db('users').truncate();
-
         // add user
         const user = [
             {
-                id: 2,
-                user_id: "2",
+                id: 1,
+                user_id: "1",
                 username: "jones",
                 password: "test",
                 email: "lijones@gmail.com",
