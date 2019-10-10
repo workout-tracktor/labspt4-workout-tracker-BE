@@ -5,6 +5,7 @@ const unqiue_fields = {
     units: ['name'],
     users: ['username', 'email'],
     logs: [],
+    sets: [],
 }
 
 module.exports = {

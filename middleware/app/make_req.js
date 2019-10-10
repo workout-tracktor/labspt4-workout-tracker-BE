@@ -9,10 +9,11 @@ module.exports = async (req, res, next) => {
             try {
                 req.data.response = await add(req.data.table, req.body)
                 if(!req.data.response) return send_error(res, '61204', req.data.table)
-                // next()
+                next()
             } catch (err) {
                 return send_error(res, err.code, req.data.table)
             }
+            break
         }
         case 'GET': {
             try {

@@ -20,6 +20,7 @@ const warez = [
 ]
 
 //ALL ROUTES
+// server.use('/api', [warez])
 server.use('/api/', router.all('*', [warez], async (req, res) => {
     res.status(200).json(req.data.response)
 }))

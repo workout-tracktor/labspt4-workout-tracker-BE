@@ -10,6 +10,7 @@ module.exports = async (req, res, next) => {
             req.body.updated = time
             req.status = 201
             // console.log(req.data)
+            break
         }
         case 'GET': {
             // req.status = 200
@@ -21,6 +22,6 @@ module.exports = async (req, res, next) => {
             break
         }
     }
-
+    
     next()
 }

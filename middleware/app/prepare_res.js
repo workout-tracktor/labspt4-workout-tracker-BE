@@ -7,6 +7,7 @@ const fill_struct = async (struct, values) => {
     for(const key of Object.keys(struct)) {
         const type = Array.isArray(struct[key]) ?  'array' : typeof struct[key]
         const tbl = key.split('_')[key.split('_').length-1]
+        // console.log('key', key, 'tbl', tbl)
         switch(type) {
             case 'string': {
                 if(struct[key]) res[key] = (await get(tbl, {id: values[key]}))[struct[key]]
@@ -14,12 +15,13 @@ const fill_struct = async (struct, values) => {
                 break
             }
             case 'object': {
+                console.log('valuekey', values[key])
                 const row = await get(tbl, {id: values[key]})
                 res[key] = await fill_struct(struct[key], row)
                 break
             }
             case 'array': {
-                const rows = await get_all(tbl, {})
+                const rows = await get_all(tbl, {}) //empty object gets everything
                 res[key] = []
                 switch(typeof struct[key][0]) {
                     case 'string': {
@@ -53,7 +55,7 @@ module.exports = async (req, res, next) => {
         }
     else
         test = await fill_struct(struct, req.data.response)
-        
+
     req.data.response = test
     next()
 }
