@@ -26,6 +26,7 @@ module.exports = async (req, res, next) => {
     const time = (new Date()).getTime()
     
     req.data = {
+        response: {},
         table: table,
         method: method,
         array: array,

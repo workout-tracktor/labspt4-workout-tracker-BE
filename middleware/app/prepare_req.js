@@ -5,8 +5,11 @@ module.exports = async (req, res, next) => {
     switch(req.method) {
         case 'POST': {
             if(req.data.table === 'users') req.body.user_id = uuid.v4()
-            req.body.created = (new Date()).getTime()
+            const time = (new Date()).getTime()
+            req.body.created = time
+            req.body.updated = time
             req.status = 201
+            // console.log(req.data)
         }
         case 'GET': {
             // req.status = 200

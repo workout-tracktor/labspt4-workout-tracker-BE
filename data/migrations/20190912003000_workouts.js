@@ -10,9 +10,9 @@ exports.up = (knex) =>
         tbl.specificType('exercise_ids', 'INT[]')
         tbl.specificType('exercise_description', 'text[]')
         tbl.text('description')
-        tbl.bigint('created_at')
+        tbl.bigint('created')
             .notNullable()
-        tbl.bigint('updated_at')
+        tbl.bigint('updated')
             .notNullable()
     })
 

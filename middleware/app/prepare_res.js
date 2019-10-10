@@ -1,7 +1,8 @@
-const {get, get_all} = require('../models')
-const {responses} = require('../../config/resobj')
+const {get, get_all} = require('../../api/models')
+const schema = require('../../config/response_schema')
 
 const fill_struct = async (struct, values) => {
+    // console.log('s', struct)
     const res = {}
     for(const key of Object.keys(struct)) {
         const type = Array.isArray(struct[key]) ?  'array' : typeof struct[key]
@@ -39,23 +40,20 @@ const fill_struct = async (struct, values) => {
             }
         }
     }
+    // console.log('res0', res)
     return res
 }
 
-prepare_res = async (req, res, next) => {
-    const struct = responses[req.data.table]
-    const dbres = req.data.response
-
-    try {
-        req.data.response = await fill_struct(struct, dbres)
-    } catch(err) {
-        console.log(err)
-    }
-    console.log('res', req.data.response)
+module.exports = async (req, res, next) => {
+    const struct = schema[req.data.table]
+    let test = []
+    if(req.data.array)
+        for(let i=0; i<req.data.response.length; i++) {
+            test.push(await fill_struct(struct, req.data.response[i]))
+        }
+    else
+        test = await fill_struct(struct, req.data.response)
+        
+    req.data.response = test
     next()
-}
-
-//EXPORTS
-module.exports = {
-    prepare_res
 }

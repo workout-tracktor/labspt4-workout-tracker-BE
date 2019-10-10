@@ -11,9 +11,9 @@ exports.up = (knex) =>
             .references('id')
             .inTable('equipments')
         tbl.text('description')
-        tbl.bigint('created_at')
+        tbl.bigint('created')
             .notNullable()
-        tbl.bigint('updated_at')
+        tbl.bigint('updated')
             .notNullable()
     })
 

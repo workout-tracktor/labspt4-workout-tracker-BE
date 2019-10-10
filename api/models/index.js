@@ -13,9 +13,7 @@ const add = async (tbl, obj) => {
 //READ
 //:returns a single row from the given table fitting a set of requirements
 const get = async (tbl, obj) => {
-    console.log('tbl', tbl, 'obj', obj)
     const user = await db(tbl).where(obj).first()
-    console.log(user)
     return user
 }
 //:returns an array of all rows from a given table fitting a set of requirements

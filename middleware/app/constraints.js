@@ -46,6 +46,8 @@ module.exports =  async (req, res, next) => {
             //check if all unique fields are in fact unique
             const {unique_fields, unremarkable_fields} = await unique(req.data.table, req.body)
             if(unremarkable_fields.length) return send_error(res, '23505', req.data.table, unique_fields, unremarkable_fields)
+
+            next()
             break
         }
         case 'GET': next(); break
@@ -55,5 +57,5 @@ module.exports =  async (req, res, next) => {
             break
         }
     }
-    next()
+    // next()
 }

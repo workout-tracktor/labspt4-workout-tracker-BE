@@ -8,9 +8,9 @@ exports.up = (knex) =>
             .unique()
             .notNullable()
         tbl.text('description')
-        tbl.bigint('created_at')
+        tbl.bigint('created')
             .notNullable()
-        tbl.bigint('updated_at')
+        tbl.bigint('updated')
             .notNullable()
     })
 
