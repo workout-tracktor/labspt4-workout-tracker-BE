@@ -35,6 +35,13 @@ module.exports = async (req, res, next) => {
             }
             break
         }
+        case 'PUT': {
+            update(req.data.table, req.data.id, req.body).then(res => {
+                req.data.response = res
+                next()
+            })
+            break
+        }
         case 'DELETE': {
             if(req.data.array) {
                 remove_all(req.data.table).then(res => {

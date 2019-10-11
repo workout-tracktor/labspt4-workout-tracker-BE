@@ -1,5 +1,6 @@
 module.exports = {
     users: {
+        id: '',
         username: '',
         user_id: '',
         email: '',

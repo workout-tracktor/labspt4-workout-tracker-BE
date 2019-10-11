@@ -22,19 +22,13 @@ module.exports = async (req, res, next) => {
             break
         }
         case 'GET': {
-            
             next()
             break
         }
-        case 'PUT': {
-            req.body = merge(req.data.schema, req.body)
-            req.body.updated = (new Date()).getTime()
-            
-            next()
-            break
-        }
+        case 'PUT': 
         case 'DELETE': {
             req.data.id = await id(req.data.table, req.body, req.query)
+            console.log('rid', req.data.id)
             next()
             break
         }
