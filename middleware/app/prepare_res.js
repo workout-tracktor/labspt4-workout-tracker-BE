@@ -49,6 +49,7 @@ const fill_struct = async (struct, values) => {
 module.exports = async (req, res, next) => {
     const struct = schema[req.data.table]
     let test = []
+    if(req.data.method === 'DELETE' && req.data.array) next()
     if(req.data.array)
         for(let i=0; i<req.data.response.length; i++) {
             test.push(await fill_struct(struct, req.data.response[i]))

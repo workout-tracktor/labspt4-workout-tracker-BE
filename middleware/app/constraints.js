@@ -24,17 +24,6 @@ const unique = async (table, body) => {
     return {unique_fields: unique_fields, unremarkable_fields: unremarkable_fields}
 }
 
-const id = async (table, body, query) => {
-    const field_name = table.slice(0,-1) + '_id'
-    if(query[field_name]) {
-        const that = await get.id(table, field_name, query[field_name])
-        console.log('t', that)
-    }
-    // const field_id = query[field_name] ? query[field_name] : body[field_name]
-    // console.log(field_name)
-    // console.log('f', field_id)
-}
-
 module.exports =  async (req, res, next) => {
 
     switch(req.method) {
@@ -47,14 +36,8 @@ module.exports =  async (req, res, next) => {
             const {unique_fields, unremarkable_fields} = await unique(req.data.table, req.body)
             if(unremarkable_fields.length) return send_error(res, '23505', req.data.table, unique_fields, unremarkable_fields)
 
-            next()
-            break
+            next(); break
         }
-        case 'GET': next(); break
-        case 'PUT':
-        case 'DELETE': {
-            id(req.data.table, req.body, req.query)
-            break
-        }
+        default: next()
     }
 }

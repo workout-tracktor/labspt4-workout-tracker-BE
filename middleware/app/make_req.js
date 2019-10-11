@@ -33,6 +33,20 @@ module.exports = async (req, res, next) => {
             } catch (err) {
                 // console.log('err', err)
             }
+            break
+        }
+        case 'DELETE': {
+            if(req.data.array) {
+                remove_all(req.data.table).then(res => {
+                    req.data.response = `Everything has been terminated!`
+                    next()
+                })
+            } else {
+                remove(req.data.table, req.data.id).then(res => {
+                    req.data.response = res
+                    next()
+                })
+            }
         }
     }
 
