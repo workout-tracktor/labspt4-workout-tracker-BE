@@ -11,8 +11,8 @@ exports.seed = function(knex) {
           exercise_ids: [1,2,3],
           exercise_description: [""],
           description: "",
-          created_at: 110,
-          updated_at: 112
+          created: 110,
+          updated: 112
         },
         {
           id: 2,
@@ -20,8 +20,8 @@ exports.seed = function(knex) {
           exercise_ids: [1,2,3],
           exercise_description: [""],
           description: "",
-          created_at: 113,
-          updated_at: 114
+          created: 113,
+          updated: 114
         },
         {
           id: 3,
@@ -29,8 +29,8 @@ exports.seed = function(knex) {
           exercise_ids: [1,2,3],
           exercise_description: [""],
           description: "",
-          created_at: 115,
-          updated_at: 116
+          created: 115,
+          updated: 116
         },
         {
           id: 4,
@@ -38,8 +38,8 @@ exports.seed = function(knex) {
           exercise_ids: [1,2,3],
           exercise_description: [""],
           description: "",
-          created_at: 117,
-          updated_at: 118
+          created: 117,
+          updated: 118
         },
         {
           id: 5,
@@ -47,8 +47,8 @@ exports.seed = function(knex) {
           exercise_ids: [1,2,3],
           exercise_description: [""],
           description: "",
-          created_at: 119,
-          updated_at: 120
+          created: 119,
+          updated: 120
         }
       ]);
     });

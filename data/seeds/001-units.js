@@ -9,43 +9,43 @@ exports.seed = function(knex) {
           id: 1,
           unit_id: "1",
           name: "lbs",
-          created_at: 111,
-          updated_at: 112
+          created: 111,
+          updated: 112
         },
         {
           id: 2,
           unit_id: "2",
           name: "kgs",
-          created_at: 113,
-          updated_at: 114
+          created: 113,
+          updated: 114
         },
         {
           id: 3,
           unit_id: "3",
           name: "metres",
-          created_at: 115,
-          updated_at: 116
+          created: 115,
+          updated: 116
         },
         {
           id: 4,
           unit_id: "4",
           name: "feet",
-          created_at: 117,
-          updated_at: 118
+          created: 117,
+          updated: 118
         },
         {
           id: 5,
           unit_id: "5",
           name: "miles",
-          created_at: 119,
-          updated_at: 120
+          created: 119,
+          updated: 120
         },
         {
           id: 6,
           unit_id: "6",
           name: "kilometres",
-          created_at: 121,
-          updated_at: 122
+          created: 121,
+          updated: 122
         }
       ]);
     });
