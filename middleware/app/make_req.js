@@ -46,7 +46,7 @@ module.exports = async (req, res, next) => {
             if(req.data.array) {
                 remove_all(req.data.table).then(res => {
                     req.data.response = `Everything has been terminated!`
-                    next()
+                    next() 
                 })
             } else {
                 remove(req.data.table, req.data.id).then(res => {
