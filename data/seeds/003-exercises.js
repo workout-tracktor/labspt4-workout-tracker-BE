@@ -21,6 +21,7 @@ exports.seed = function(knex) {
           sets: [1,2,3],
           equipment_id: 2,
           description: "An Exercise",
+          completed: true,
           workout_type: "Type 1",
           created: 113,
           updated: 114
@@ -31,6 +32,7 @@ exports.seed = function(knex) {
           sets: [1,2,3],
           equipment_id: 3,
           description: "An Exercise",
+          completed: true,
           workout_type: "Type 1",
           created: 115,
           updated: 116
@@ -41,6 +43,7 @@ exports.seed = function(knex) {
           sets: [1,2,3],
           equipment_id: 4,
           description: "An Exercise",
+          completed: true,
           workout_type: "Type 1",
           created: 117,
           updated: 118
@@ -51,6 +54,7 @@ exports.seed = function(knex) {
           sets: [1,2,3],
           equipment_id: 5,
           description: "An Exercise",
+          completed: true,
           workout_type: "Type 1",
           created: 119,
           updated: 120
@@ -61,6 +65,7 @@ exports.seed = function(knex) {
           sets: [1,2,3],
           equipment_id: 6,
           description: "An Exercise",
+          completed: true,
           workout_type: "Type 1",
           created: 121,
           updated: 122
@@ -71,6 +76,7 @@ exports.seed = function(knex) {
           sets: [1,2,3],
           equipment_id: 7,
           description: "An Exercise",
+          completed: true,
           workout_type: "Type 1",
           created: 123,
           updated: 124
@@ -81,6 +87,7 @@ exports.seed = function(knex) {
           sets: [1,2,3],
           equipment_id: 8,
           description: "An Exercise",
+          completed: true,
           workout_type: "Type 1",
           created: 125,
           updated: 126
@@ -91,6 +98,7 @@ exports.seed = function(knex) {
           sets: [1,2,3],
           equipment_id: 9,
           description: "An Exercise",
+          completed: true,
           workout_type: "Type 1",
           created: 127,
           updated: 128
@@ -101,6 +109,7 @@ exports.seed = function(knex) {
           sets: [1,2,3],
           equipment_id: 10,
           description: "An Exercise",
+          completed: true,
           workout_type: "Type 1",
           created: 129,
           updated: 130
