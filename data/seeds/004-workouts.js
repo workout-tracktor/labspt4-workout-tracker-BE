@@ -7,9 +7,8 @@ exports.seed = function(knex) {
       return knex("workouts").insert([
         {
           id: 1,
-          workout_id: "1",
           name: "Toilet Lift",
-          exercise_ids: [],
+          exercise_ids: [1,2,3],
           exercise_description: [""],
           description: "",
           created_at: 110,
@@ -17,9 +16,8 @@ exports.seed = function(knex) {
         },
         {
           id: 2,
-          workout_id: "2",
           name: "Couch Pivot",
-          exercise_ids: [],
+          exercise_ids: [1,2,3],
           exercise_description: [""],
           description: "",
           created_at: 113,
@@ -27,9 +25,8 @@ exports.seed = function(knex) {
         },
         {
           id: 3,
-          workout_id: "3",
           name: "Burrito Roll",
-          exercise_ids: [],
+          exercise_ids: [1,2,3],
           exercise_description: [""],
           description: "",
           created_at: 115,
@@ -37,9 +34,8 @@ exports.seed = function(knex) {
         },
         {
           id: 4,
-          workout_id: "4",
           name: "Chinese Buffet",
-          exercise_ids: [],
+          exercise_ids: [1,2,3],
           exercise_description: [""],
           description: "",
           created_at: 117,
@@ -47,9 +43,8 @@ exports.seed = function(knex) {
         },
         {
           id: 5,
-          workout_id: "5",
           name: "Hot Dog Contest",
-          exercise_ids: [],
+          exercise_ids: [1,2,3],
           exercise_description: [""],
           description: "",
           created_at: 119,
