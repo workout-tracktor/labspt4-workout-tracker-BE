@@ -17,8 +17,8 @@ exports.seed = function(knex) {
           weight_units: 1,
           distance_units: 3,
           avatar: "",
-          created_at: 111,
-          updated_at: 123
+          created: 111,
+          updated: 123
         }
       ]);
     });

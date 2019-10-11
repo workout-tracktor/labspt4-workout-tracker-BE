@@ -10,80 +10,80 @@ exports.seed = function(knex) {
           equipment_id: "1",
           name: "Elliptical",
           description: "Elliptical Machine",
-          created_at: 131,
-          updated_at: 132
+          created: 131,
+          updated: 132
         },
         {
           id: 2,
           equipment_id: "2",
           name: "Stationary Bike",
           description: "Stationary Bike",
-          created_at: 133,
-          updated_at: 134
+          created: 133,
+          updated: 134
         },
         {
           id: 3,
           equipment_id: "3",
           name: "Aerobic Steppers",
           description: "Aerobic Stepper",
-          created_at: 135,
-          updated_at: 136
+          created: 135,
+          updated: 136
         },
         {
           id: 4,
           equipment_id: "4",
           name: "Cable Pulley",
           description: "Cable Pulley",
-          created_at: 137,
-          updated_at: 138
+          created: 137,
+          updated: 138
         },
         {
           id: 5,
           equipment_id: "5",
           name: "Weight Machine",
           description: "Weight Machine",
-          created_at: 139,
-          updated_at: 140
+          created: 139,
+          updated: 140
         },
         {
           id: 6,
           equipment_id: "6",
           name: "Free Weights",
           description: "Free Weights",
-          created_at: 141,
-          updated_at: 142
+          created: 141,
+          updated: 142
         },
         {
           id: 7,
           equipment_id: "7",
           name: "Abdominal Cruncher",
           description: "Abdominal Cruncher",
-          created_at: 143,
-          updated_at: 144
+          created: 143,
+          updated: 144
         },
         {
           id: 8,
           equipment_id: "8",
           name: "Rowing Machine",
           description: "Rowing Machine",
-          created_at: 145,
-          updated_at: 146
+          created: 145,
+          updated: 146
         },
         {
           id: 9,
           equipment_id: "9",
           name: "Exercise Balls",
           description: "Exercise Balls",
-          created_at: 147,
-          updated_at: 148
+          created: 147,
+          updated: 148
         },
         {
           id: 10,
           equipment_id: "10",
           name: "Treadmill",
           description: "Treadmill",
-          created_at: 149,
-          updated_at: 150
+          created: 149,
+          updated: 150
         }
       ]);
     });

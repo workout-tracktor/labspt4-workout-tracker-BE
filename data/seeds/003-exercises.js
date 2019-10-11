@@ -12,8 +12,8 @@ exports.seed = function(knex) {
           equipment_id: 1,
           description: "An Exercise",
           workout_type: "Type 1",
-          created_at: 111,
-          updated_at: 112
+          created: 111,
+          updated: 112
         },
         {
           id: 2,
@@ -22,8 +22,8 @@ exports.seed = function(knex) {
           equipment_id: 2,
           description: "An Exercise",
           workout_type: "Type 1",
-          created_at: 113,
-          updated_at: 114
+          created: 113,
+          updated: 114
         },
         {
           id: 3,
@@ -32,8 +32,8 @@ exports.seed = function(knex) {
           equipment_id: 3,
           description: "An Exercise",
           workout_type: "Type 1",
-          created_at: 115,
-          updated_at: 116
+          created: 115,
+          updated: 116
         },
         {
           id: 4,
@@ -42,8 +42,8 @@ exports.seed = function(knex) {
           equipment_id: 4,
           description: "An Exercise",
           workout_type: "Type 1",
-          created_at: 117,
-          updated_at: 118
+          created: 117,
+          updated: 118
         },
         {
           id: 5,
@@ -52,8 +52,8 @@ exports.seed = function(knex) {
           equipment_id: 5,
           description: "An Exercise",
           workout_type: "Type 1",
-          created_at: 119,
-          updated_at: 120
+          created: 119,
+          updated: 120
         },
         {
           id: 6,
@@ -62,8 +62,8 @@ exports.seed = function(knex) {
           equipment_id: 6,
           description: "An Exercise",
           workout_type: "Type 1",
-          created_at: 121,
-          updated_at: 122
+          created: 121,
+          updated: 122
         },
         {
           id: 7,
@@ -72,8 +72,8 @@ exports.seed = function(knex) {
           equipment_id: 7,
           description: "An Exercise",
           workout_type: "Type 1",
-          created_at: 123,
-          updated_at: 124
+          created: 123,
+          updated: 124
         },
         {
           id: 8,
@@ -82,8 +82,8 @@ exports.seed = function(knex) {
           equipment_id: 8,
           description: "An Exercise",
           workout_type: "Type 1",
-          created_at: 125,
-          updated_at: 126
+          created: 125,
+          updated: 126
         },
         {
           id: 9,
@@ -92,8 +92,8 @@ exports.seed = function(knex) {
           equipment_id: 9,
           description: "An Exercise",
           workout_type: "Type 1",
-          created_at: 127,
-          updated_at: 128
+          created: 127,
+          updated: 128
         },
         {
           id: 10,
@@ -102,8 +102,8 @@ exports.seed = function(knex) {
           equipment_id: 10,
           description: "An Exercise",
           workout_type: "Type 1",
-          created_at: 129,
-          updated_at: 130
+          created: 129,
+          updated: 130
         }
       ]);
     });
