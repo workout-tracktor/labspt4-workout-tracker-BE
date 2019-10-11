@@ -13,8 +13,6 @@ exports.up = (knex) =>
         tbl.integer('equipment_id')
             .references('id')
             .inTable('equipments')
-            .onDelete('CASCADE')
-            .onUpdate('CASCADE')
         tbl.text('description')
         tbl.bigint('created_at')
             .notNullable()
