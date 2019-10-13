@@ -1,5 +1,5 @@
-const {get, get_all} = require('../../api/models')
-const schema = require('../../config/response_schema')
+const {get, get_all} = require('../config/models')
+const schema = require('../config/response_schema')
 
 const fill_struct = async (struct, values) => {
     // console.log('s', struct)

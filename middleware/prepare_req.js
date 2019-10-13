@@ -1,6 +1,6 @@
-const {merge} = require('../../api/helpers/replace')
+const {merge} = require('./helpers/replace')
 const uuid = require('uuid')
-const get = require('../../api/helpers/get')
+const get = require('./helpers/get')
 
 const id = async (table, body, query) => {
     const field_name = table.slice(0,-1) + '_id'
