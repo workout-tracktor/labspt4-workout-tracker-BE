@@ -11,8 +11,8 @@
 
 */
 //imports
-const get = require('../../api/helpers/get')
-const {unqiue_fields} = require('../../config/unique_fields')
+const get = require('./helpers/get')
+const {unqiue_fields} = require('../config/unique_fields')
 
 //content
 module.exports = async (req, res, next) => {

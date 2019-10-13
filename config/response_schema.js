@@ -1,14 +1,13 @@
 module.exports = {
     users: {
-        id: '',
         username: '',
         user_id: '',
-        email: '',
+        email: ''
     },
     exercises: {
         name: '',
         workout_type: '',
-        sets: ['id'],
+        sets: [{id: '', reps: ''}],
         completed: '',
         created: '',
     },

@@ -1,5 +1,5 @@
-const {add, get, get_all, update, remove, remove_all} = require('../../api/models')
-const {send_error} = require('../../api/helpers/errors')
+const {add, get, get_all, update, remove, remove_all} = require('../config/models')
+const {send_error} = require('./helpers/errors')
 
 // const prepare_resp = require('./prepare_res')
 
