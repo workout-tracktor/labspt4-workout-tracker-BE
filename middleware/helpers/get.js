@@ -19,10 +19,18 @@ path = path => {
     return {array, table}
 }
 
-columns = async table => {
-    const schema = await db(table).columnInfo()
-    return Object.keys(schema)
-}
+tables = async () =>
+    await db.raw(`SELECT table_name FROM information_schema.tables WHERE table_schema='public'`)
+        .then(schema => schema.rows.filter(table => !table.table_name.includes('knex_'))
+        .map(table => table.table_name))
+
+unqiues = async table =>
+    await db.raw(`select constraint_name from information_schema.table_constraints WHERE table_name='${table}' AND constraint_type='UNIQUE'`)
+        .then(constraints => constraints.rows)
+        .map(row => row.constraint_name.split('_').filter(word => word !== table && word !== 'unique').join('_'))
+
+columns = async table =>
+    Object.keys(await db(table).columnInfo())
 
 required = async table => {
     const not_required = ['id', table.slice(0, -1) + '_id', 'timestamp'] //move this to middleware

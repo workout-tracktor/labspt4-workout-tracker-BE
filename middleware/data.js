@@ -24,9 +24,8 @@ module.exports = async (req, res, next) => {
     const {settings, query} = get.params(columns, req.query)
     const method = req.method
     const time = (new Date()).getTime()
-    
+
     req.data = {
-        response: {},
         table: table,
         method: method,
         array: array,
