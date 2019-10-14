@@ -24,16 +24,16 @@ module.exports = async (req, res, next) => {
     const {settings, query} = get.params(columns, req.query)
     const method = req.method
     const time = (new Date()).getTime()
+    const uniques = await get.unique(table)
     
     req.data = {
-        response: {},
         table: table,
         method: method,
         array: array,
         schema: schema,
         required: required,
         settings: settings,
-        unique: unqiue_fields[table],
+        unique: uniques,
         query: query,
         body: body,
         time: time,
