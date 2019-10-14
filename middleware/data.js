@@ -12,31 +12,19 @@
 */
 //imports
 const get = require('./helpers/get')
-const {unqiue_fields} = require('../config/unique_fields')
 
 //content
 module.exports = async (req, res, next) => {
     const {array, table} = get.path(req.originalUrl)
-    const columns = await get.columns(table)
-    const schema = get.schema(columns)
-    const required = await get.required(table)
-    const body = get.body(columns, req.body)
-    const {settings, query} = get.params(columns, req.query)
-    const method = req.method
-    const time = (new Date()).getTime()
-    const uniques = await get.unique(table)
-    
-    req.data = {
-        table: table,
-        method: method,
-        array: array,
-        schema: schema,
-        required: required,
-        settings: settings,
-        unique: uniques,
-        query: query,
-        body: body,
-        time: time,
+    req.array = array
+    req.table = table
+    req.time = time = (new Date()).getTime()
+
+    switch(req.method) {
+        case 'POST':
+        case 'PUT':
+            const columns = await get.columns(req.table)
+            req.body = get.body(columns, req.body)
     }
 
     next()

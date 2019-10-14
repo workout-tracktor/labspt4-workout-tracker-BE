@@ -12,7 +12,7 @@ const id = async (table, body, query) => {
 module.exports = async (req, res, next) => {
     switch(req.method) {
         case 'POST': {
-            if(req.data.table === 'users') req.body.user_id = uuid.v4()
+            if(req.table === 'users') req.body.user_id = uuid.v4()
             const time = (new Date()).getTime()
             req.body.created = time
             req.body.updated = time
@@ -26,9 +26,10 @@ module.exports = async (req, res, next) => {
             break
         }
         case 'PUT': 
+            req.body.updated = req.time
         case 'DELETE': {
-            req.data.id = await id(req.data.table, req.body, req.query)
-            console.log('rid', req.data.id)
+            req.data.id = await id(req.table, req.body, req.query)
+            // console.log('rid', req.data.id)
             next()
             break
         }
