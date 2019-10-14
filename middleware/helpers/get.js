@@ -24,7 +24,7 @@ tables = async () =>
         .then(schema => schema.rows.filter(table => !table.table_name.includes('knex_'))
         .map(table => table.table_name))
 
-unqiues = async table =>
+unique = async table =>
     await db.raw(`select constraint_name from information_schema.table_constraints WHERE table_name='${table}' AND constraint_type='UNIQUE'`)
         .then(constraints => constraints.rows)
         .map(row => row.constraint_name.split('_').filter(word => word !== table && word !== 'unique').join('_'))
@@ -67,4 +67,5 @@ module.exports = {
     params,
     id,
     schema,
+    unique,
 }
