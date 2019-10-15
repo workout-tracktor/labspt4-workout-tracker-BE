@@ -52,8 +52,20 @@ params = (columns, given) => {
     return {settings, query}
 }
 
-id = async (table, field, field_id) => {
-    const id = await db(table).where({[field]: field_id}).select('id').first()
+id_helper = async (table, field_name, id) => {
+    await db(table).select('id')
+}
+
+id = async (table, body, query) => {
+    let id = ''
+    const field_name = table.slice(0,-1) + '_id'
+    const ids = [query[field_name], query.id, body[field_name], body.id]
+        .filter(id => id)
+        .map(id => {return {field_name: Number.isInteger(id) ? 'id' : field_name, id: id}})
+    for(let i=0; i<ids.length; i++) {
+        id = await db(table).select('id').where({[ids[i].field_name]: ids[i].id}).first()
+        if(id) break
+    }
     if(id) return id.id
     else return false
 }

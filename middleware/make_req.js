@@ -1,11 +1,7 @@
 const {add, get, get_all, update, remove, remove_all} = require('../config/models')
 const {send_error} = require('./helpers/errors')
-const get_temp = require('./helpers/get')
-
-// const prepare_resp = require('./prepare_res')
 
 module.exports = async (req, res, next) => {
-
     switch(req.method) {
         case 'POST': {
             try {
@@ -19,16 +15,14 @@ module.exports = async (req, res, next) => {
         }
         case 'GET': {
             try {
-                const columns = await get_temp.columns(req.table)
-                const {settings, query} = get_temp.params(columns, req.query)
                 if(req.array) {
-                    get_all(req.table, query)
+                    get_all(req.table, req.query)
                         .then(res => {
                             req.response = res
                             next()
                         })
                 } else {
-                    get(req.table, query)
+                    get(req.table, req.query)
                         .then(res => {
                             req.response = res
                             next()
@@ -40,7 +34,7 @@ module.exports = async (req, res, next) => {
             break
         }
         case 'PUT': {
-            update(req.table, req.data.id, req.body).then(res => {
+            update(req.table, req.id, req.body).then(res => {
                 req.response = res
                 next()
             })
@@ -53,13 +47,11 @@ module.exports = async (req, res, next) => {
                     next() 
                 })
             } else {
-                remove(req.table, req.data.id).then(res => {
+                remove(req.table, req.id).then(res => {
                     req.response = res
                     next()
                 })
             }
         }
     }
-
-    // next()
 }
