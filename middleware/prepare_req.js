@@ -27,7 +27,7 @@ module.exports = async (req, res, next) => {
             next()
             break
         }
-        case 'PUT': 
+        case 'PUT': {
             const {table} = get.path(req.originalUrl)
             const columns = await get.columns(table)
             const time = (new Date()).getTime()
@@ -35,7 +35,9 @@ module.exports = async (req, res, next) => {
             req.body = get.body(columns, req.body)
             req.body.updated = time
             req.status = 200
+            next()
             break
+        }
         case 'DELETE': {
             const {array, table} = get.path(req.originalUrl)
             req.table = table
