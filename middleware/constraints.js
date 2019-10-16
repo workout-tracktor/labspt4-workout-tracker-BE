@@ -39,12 +39,20 @@ module.exports =  async (req, res, next) => {
             next()
             break
         }
-        case 'PUT':
+        case 'PUT': {
+            const {array, table} = get.path(req.originalUrl)
+            if(!array) {
+                req.id = await get.id(table, req.body, req.query)
+                req.id ? next() : send_error(res, 'P0001', table)
+            }
+            else next()
+            break
+        }
         case 'DELETE': {
             const {array, table} = get.path(req.originalUrl)
             if(!array) {
                 req.id = await get.id(table, req.body, req.query)
-                next()
+                req.id ? next() : send_error(res, 'D0001', table)
             }
             else next()
             break

@@ -19,7 +19,12 @@ const send_error = (res, code, table, fields, expected) => {
         case '23505': error.status = 500; error.detail = `Unremarkable fields.`; break
         case '22P02': error.status = 500; error.detail = `Invalid text representation???`; break
         case '42703': error.status = 500; error.detail = `Undefined column. ${res}`; break
+        case 'P0002': error.status = 404; error.detail = `Whatever you're looking for isn't here.`; break
         //custom errors
+        //PUT ERRORS
+        case 'P0001': error.status = 400; error.detail = `Put requests require a valid ${table === 'users' ? 'user_id' : 'id'}.`; break
+        //DELETE ERRORS
+        case 'D0001': error.status = 400; error.detail = `Delete requests require a valid ${table === 'users' ? 'user_id' : 'id'}.`; break
         case '61200': error.status = 406; error.detail = `No content available following the criteria given.`; break
         case '61201': error.status = 406; error.detail = `Was not given a ${fields} field.`; break
         case '61202': error.status = 404; error.detail = `${fields} could not be found.`; break
@@ -29,6 +34,7 @@ const send_error = (res, code, table, fields, expected) => {
         //default
         default: error.status = 612; error.detail = `Backend broked, unknown error.`
     }
+
 
     res.status(error.status).json(error)
 }
