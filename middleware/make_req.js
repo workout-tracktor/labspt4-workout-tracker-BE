@@ -14,27 +14,22 @@ module.exports = async (req, res, next) => {
             break
         }
         case 'GET': {
-            try {
-                if(req.array) {
-                    get_all(req.table, req.query)
-                        .then(res => {
-                            req.response = res
-                            next()
-                        })
-                } else {
-                    get(req.table, req.query)
-                        .then(res => {
-                            req.response = res
-                            next()
-                        })
-                }
-            } catch (err) {
-                // console.log('err', err)
+            if(req.array) {
+                get_all(req.table, req.query).then(record => {
+                    req.response = record
+                    record ? next() : send_error(res, 'P0002', req.table)
+                })
+            } else {
+                get(req.table, req.query).then(records => {
+                    req.response = records
+                    records ? next() : send_error(res, 'P0002', req.table)
+                })
             }
             break
         }
         case 'PUT': {
             update(req.table, req.id, req.body).then(res => {
+                console.log('made it here', res)
                 req.response = res
                 next()
             })
