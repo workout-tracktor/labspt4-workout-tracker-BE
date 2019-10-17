@@ -53,7 +53,7 @@ describe('GET /users', () => {
 
 });
 
-describe('get user by filter', () => {
+describe('get user by id', () => {
     // cleanup for db
     beforeEach(done => {
         knex.migrate.rollback()
@@ -97,7 +97,7 @@ describe('get user by filter', () => {
     });
 });
 
-describe('getUserByUsername', () => {
+describe('get user by username', () => {
     // cleanup for db
     beforeEach(done => {
         knex.migrate.rollback()
@@ -134,9 +134,9 @@ describe('getUserByUsername', () => {
 
         await db('users').insert(user);
 
-        const res = await request(server).get(`/api/user?username=${user[0].username}`);
+        const res = await request(server).get(`/api/user?username=${user[1].username}`);
 
         expect(res.status).toBe(200);
-        expect(res.body.email).toEqual("smith5w@gmail.com");
+        expect(res.body.email).toEqual("jones@gmail.com");
     });
 });
