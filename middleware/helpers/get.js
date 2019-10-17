@@ -80,4 +80,5 @@ module.exports = {
     id,
     schema,
     unique,
+    tables,
 }

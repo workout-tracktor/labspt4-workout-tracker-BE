@@ -1,4 +1,4 @@
-const {get, get_all} = require('../config/models')
+const {get_one, get_all} = require('../config/models')
 const schema = require('../config/response_schema')
 
 const fill_struct = async (struct, values) => {
@@ -10,13 +10,13 @@ const fill_struct = async (struct, values) => {
         // console.log('key', key, 'tbl', tbl)
         switch(type) {
             case 'string': {
-                if(struct[key]) res[key] = (await get(tbl, {id: values[key]}))[struct[key]]
+                if(struct[key]) res[key] = (await get_one(tbl, {id: values[key]}))[struct[key]]
                 else res[key] = values[key]
                 break
             }
             case 'object': {
                 console.log('valuekey', values[key])
-                const row = await get(tbl, {id: values[key]})
+                const row = await get_one(tbl, {id: values[key]})
                 res[key] = await fill_struct(struct[key], row)
                 break
             }

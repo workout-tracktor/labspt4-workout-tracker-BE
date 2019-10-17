@@ -21,6 +21,8 @@ const send_error = (res, code, table, fields, expected) => {
         case '42703': error.status = 500; error.detail = `Undefined column. ${res}`; break
         case 'P0002': error.status = 404; error.detail = `Whatever you're looking for isn't here.`; break
         //custom errors
+        //POST ERRORS
+        case 'C0001': error.status = 400; error.detail = `Invalid id type in field ${table}.`; break
         //PUT ERRORS
         case 'P0001': error.status = 400; error.detail = `Put requests require a valid ${table === 'users' ? 'user_id' : 'id'}.`; break
         //DELETE ERRORS

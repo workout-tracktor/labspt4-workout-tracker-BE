@@ -9,14 +9,10 @@
 //IMPORTS
 //local
 const db = require('../../data/dbConfig')
+const get = require('./get')
 
-//HELPERS
-
-//:filters out any unused unique fields
-//:maps through remaining fields to check if they're already in the db
-//:returns array of unremarkable key value pairs
-unique = async (table, body, unqiue_fields) => {
-  // console.log(table, body, unqiue_fields)
+//HELPERS HELPERS
+const unremarkable = async (table, body, unqiue_fields) => {
   let fields_to_check = unqiue_fields.filter(field => body.hasOwnProperty(field))
   const get = async (obj) => await Promise.resolve(db(table).where(obj).first())
   const in_use = (await Promise.all(fields_to_check.map(async item => {
@@ -25,6 +21,21 @@ unique = async (table, body, unqiue_fields) => {
   return in_use
 }
 
+//HELPERS
+const required = async (table, body) => {
+  const not_required = ['created', 'updated']
+  const required_fields = (await get.required(table)).filter(field => not_required.indexOf(field) === -1)
+  const missing_fields = required_fields.filter(field => !body.hasOwnProperty(field))
+  return {required_fields: required_fields, missing_fields: missing_fields}
+}
+
+const unique = async (table, body) => {
+  const unique_fields = await get.unique(table)
+  const unremarkable_fields = (await unremarkable(table, body, unique_fields))
+  return {unique_fields: unique_fields, unremarkable_fields: unremarkable_fields}
+}
+
 module.exports = {
+  required,
   unique,
 }
