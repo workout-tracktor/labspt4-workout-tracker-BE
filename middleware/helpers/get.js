@@ -10,7 +10,7 @@ schema = columns =>
         .reduce((obj,val) => (obj[val]=null,obj), {})
 
 path = path => {
-    let table = path.substr(1)
+    let table = path.split('/')[2].split('?')[0]
     let array = true
     if(table.substr(table.length - 1) !== 's') {
         table += 's'
@@ -19,10 +19,18 @@ path = path => {
     return {array, table}
 }
 
-columns = async table => {
-    const schema = await db(table).columnInfo()
-    return Object.keys(schema)
-}
+tables = async () =>
+    await db.raw(`SELECT table_name FROM information_schema.tables WHERE table_schema='public'`)
+        .then(schema => schema.rows.filter(table => !table.table_name.includes('knex_'))
+        .map(table => table.table_name))
+
+unique = async table =>
+    await db.raw(`select constraint_name from information_schema.table_constraints WHERE table_name='${table}' AND constraint_type='UNIQUE'`)
+        .then(constraints => constraints.rows)
+        .map(row => row.constraint_name.split('_').filter(word => word !== table && word !== 'unique').join('_'))
+
+columns = async table =>
+    Object.keys(await db(table).columnInfo())
 
 required = async table => {
     const not_required = ['id', table.slice(0, -1) + '_id', 'timestamp'] //move this to middleware
@@ -44,8 +52,20 @@ params = (columns, given) => {
     return {settings, query}
 }
 
-id = async (table, field, field_id) => {
-    const id = await db(table).where({[field]: field_id}).select('id').first()
+id_helper = async (table, field_name, id) => {
+    await db(table).select('id')
+}
+
+id = async (table, body, query) => {
+    let id = ''
+    const field_name = table.slice(0,-1) + '_id'
+    const ids = [query[field_name], query.id, body[field_name], body.id]
+        .filter(id => id)
+        .map(id => {return {field_name: Number.isInteger(id) ? 'id' : field_name, id: id}})
+    for(let i=0; i<ids.length; i++) {
+        id = await db(table).select('id').where({[ids[i].field_name]: ids[i].id}).first()
+        if(id) break
+    }
     if(id) return id.id
     else return false
 }
@@ -59,4 +79,5 @@ module.exports = {
     params,
     id,
     schema,
+    unique,
 }

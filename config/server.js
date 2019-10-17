@@ -1,41 +1,26 @@
-//IMPORT MIDDLEWARE
-const express = require("express")
-const cors = require('cors')
-const helmet = require('helmet')
-
 //SETUP
+const express = require("express")
 const server = express()
+const router = express.Router()
 
-//DEFINE ROUTES
-const routes = [
-    require('../api/routes/users'),
-    require('../api/routes/units'),
-    require('../api/routes/equipment'),
-    require('../api/routes/exercises'),
-    require('../api/routes/workouts'),
-    require('../api/routes/logs')
-]
-
-//trying something
-var corsOptions = {
-    origin: '*',
-    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-   }
-
-//PRE MIDDLEWARE
-server.use(helmet())        //security
-server.use(cors(corsOptions))          //ensures front and back end can work on the same machine
+//IMPORT AND USE MIDDLEWARE
+server.use(require('cors')())
+server.use(require('helmet')())
 server.use(express.json())  //json all the things!
 
-//START ROUTES
-routes.forEach(route => server.use('/api', route))
+//APP Middleware
+//:add these the order you want to use them
+const warez = [
+    require('../middleware/constraints'),
+    require('../middleware/encrypt'),
+    require('../middleware/prepare_req'),
+    require('../middleware/make_req'),
+    require('../middleware/prepare_res'),
+]
 
-//POST MIDDLEWARE
-//:aint got nothin'
-
-//API IS ONLINE NOTIFICATION
-server.get('/', (req, res) =>
-    res.send('You want data? Try going somewhere else for that.')
-)
+//ALL ROUTES
+server.use('/api/', router.all('*', [warez], async (req, res) => {
+    res.status(req.status).json(req.response)
+}))
 
 module.exports = server
