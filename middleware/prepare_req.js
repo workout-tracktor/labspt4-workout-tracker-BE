@@ -1,20 +1,32 @@
 const uuid = require('uuid')
+const crypt = require('bcryptjs')
 const get = require('./helpers/get')
 const check = require('./helpers/check')
 const {add_one, get_one, get_all, update_one, remove_one, remove_all} = require('../config/models')
 const {send_error} = require('./helpers/errors')
 
-//update all models to get_one remove_one
-const prepare_post = async (table, body) => {
-    const {required_fields, missing_fields} = await requirements(table, body)
-    // if(missing_fields.length > 0) 
+//check every 
+const check_post = async (res, table, body) => {
+    //check if all required fields are present
+    const {required_fields, missing_fields} = await check.required(table, body)
+    if(missing_fields.length > 0)
+        return {error: true, table: table, code: 'P1111', required_fields: required_fields, missing_fields: missing_fields}
 
+    //check if all unqiue fields are unique
+    const {unique_fields, unremarkable_fields} = await check.unique(table, body)
+    if(unremarkable_fields.length)
+        return {error: true, table: table, code: 'P2222', unique_fields: unique_fields, unremarkable_fields: unremarkable_fields}
 
+        //check for password fields and encrypt them
+    if(body.hasOwnProperty('password'))
+        body.password = crypt.hashSync(body.password, 1)
 
+        return body
 }
 
 const multi_post = async (res, table, body) => {
-    console.log('body0', body)
+    let post_stack = []
+    // console.log('body0', body)
     const tbls = await tables()
     let error = ''
     for(let tbl_name in body) {
@@ -33,28 +45,40 @@ const multi_post = async (res, table, body) => {
                 //no need to post; just check if the id is valid
                 case 'string':
                 case 'integer': try {
-                    const field_name = type === 'string' ? tbl_name.slice(0,-1)+'_id' : 'id'
-                    const id = (await get_one(tbl_name, {[field_name]: body[tbl_name]})).id
-                    if(!id) console.log(`${field_name} is invalid`)
-                    else body[tbl_name] = [id]
-                    break
+                        const field_name = type === 'string' ? tbl_name.slice(0,-1)+'_id' : 'id'
+                        const id = (await get_one(tbl_name, {[field_name]: body[tbl_name]})).id
+                        if(!id) console.log(`${field_name} is invalid`)
+                        else body[tbl_name] = [id]
+                        break
                     } catch(err) {return (error = 'C0001')}
                 //objects should have all required and unique fields
                 case 'object': try {
-                    console.log('object')
-                } catch(err) {return (error = 'C0002')}
+                        const post = await check_post(res, tbl_name, body[tbl_name])
+                        if(post.error) return post
+                        else post_stack.push({table: tbl_name, body: post})
+                        break
+                    } catch(err) {
+                        return {error: true, table: tbl_name, code: 'C0002'}
+                    }
+                case 'array': try {
+                        console.log('an array was sent')
+                    } catch(err) {
+                        return {error: true, table: tbl_name, code: 'C0003'}
+                    }
             }
         }
     }
-    console.log('body1', body)
+    // console.log('body1', body)
+    return post_stack
 }
 
 module.exports = async (req, res, next) => {
     switch(req.method) {
         case 'POST': {
-            const error_code = await multi_post(res, req.table, req.body)
-            // console.log('ec', error_code)
-            if(error_code) return send_error(res, error_code)
+            const stack = await multi_post(res, req.table, req.body)
+            console.log('back in main')
+            console.log('post stack', stack)
+            if(stack.error) return send_error(res, stack.code, stack.table)
             // console.log('made it here')
 
             const {table} = get.path(req.originalUrl)
