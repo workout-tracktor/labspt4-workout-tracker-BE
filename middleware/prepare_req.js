@@ -7,6 +7,7 @@ const {send_error} = require('./helpers/errors')
 
 //check every 
 const check_post = async (res, table, body) => {
+    console.log('yerp')
     //check if all required fields are present
     const {required_fields, missing_fields} = await check.required(table, body)
     if(missing_fields.length > 0)
@@ -17,26 +18,31 @@ const check_post = async (res, table, body) => {
     if(unremarkable_fields.length)
         return {error: true, table: table, code: 'P2222', unique_fields: unique_fields, unremarkable_fields: unremarkable_fields}
 
-        //check for password fields and encrypt them
+    //check for password fields and encrypt them
     if(body.hasOwnProperty('password'))
         body.password = crypt.hashSync(body.password, 1)
 
-        return body
+    //make sure the user_id is unique
+    if(table === 'users') body.user_id = uuid.v4()
+    
+    //add created and updated times
+    body.created = body.updated = (new Date()).getTime()
+    // console.log({table: table, body: body})
+    return body
 }
 
-const multi_post = async (res, table, body) => {
-    let post_stack = []
-    // console.log('body0', body)
-    const tbls = await tables()
-    let error = ''
-    for(let tbl_name in body) {
+const multi_post = async (res, table, body, error = '') => {
+    let stack = []
+    const tbls = await tables() //move this outside of the loop, only need it once
+    for(let idx in tbls) {
+        const tbl = tbls[idx]
         //field has the same name as a table
-        if(tbls.includes(tbl_name)) {
-            //check the value type of table
+        if(body.hasOwnProperty(tbl)) {
+            //check the value type of field in body
             //:array and object need to be checked and posted in the db
             //:string and integer need to be checked if they exist in the db
-            let type = Array.isArray(body[tbl_name]) ? 'array' : typeof body[tbl_name]
-            if(type === 'number') type = Number.isInteger(body[tbl_name]) ? 'integer' : 'number'
+            let type = Array.isArray(body[tbl]) ? 'array' : typeof body[tbl]
+            if(type === 'number') type = Number.isInteger(body[tbl]) ? 'integer' : 'number'
             // console.log('type', type)
             switch(type) {
                 //: no id should be type number
@@ -45,43 +51,55 @@ const multi_post = async (res, table, body) => {
                 //no need to post; just check if the id is valid
                 case 'string':
                 case 'integer': try {
-                        const field_name = type === 'string' ? tbl_name.slice(0,-1)+'_id' : 'id'
-                        const id = (await get_one(tbl_name, {[field_name]: body[tbl_name]})).id
+                        const field_name = type === 'string' ? tbl.slice(0,-1)+'_id' : 'id'
+                        const id = (await get_one(tbl, {[field_name]: body[tbl]})).id
                         if(!id) console.log(`${field_name} is invalid`)
-                        else body[tbl_name] = [id]
+                        else body[tbl] = [id]
                         break
                     } catch(err) {return (error = 'C0001')}
                 //objects should have all required and unique fields
                 case 'object': try {
-                        const post = await check_post(res, tbl_name, body[tbl_name])
+                        // console.log('object table', tbl)
+                        // console.log('tbl', tbl, 'bdy', body[tbl])
+                        let post = await check_post(res, tbl, body[tbl])
                         if(post.error) return post
-                        else post_stack.push({table: tbl_name, body: post})
+                        stack = await multi_post(res, tbl, post)
+                        console.log('new stack item', stack)
+                        /////////////////
+                        // stack.push({table: tbl, body: post})
                         break
                     } catch(err) {
-                        return {error: true, table: tbl_name, code: 'C0002'}
+                        console.log('err', err)
+                        return {error: true, table: tbl, code: 'C0002'}
                     }
                 case 'array': try {
                         console.log('an array was sent')
                     } catch(err) {
-                        return {error: true, table: tbl_name, code: 'C0003'}
+                        return {error: true, table: tbl, code: 'C0003'}
                     }
             }
         }
     }
-    // console.log('body1', body)
-    return post_stack
+    //filter out any extra fields from the current item
+    const columns = await get.columns(table)
+    body = get.body(columns, body)
+    //add current item to the stack and push it up
+    stack.push({table: table, body: body})
+    return stack
 }
 
 module.exports = async (req, res, next) => {
     switch(req.method) {
         case 'POST': {
-            const stack = await multi_post(res, req.table, req.body)
+            const {table} = get.path(req.originalUrl)
+            const stack = await multi_post(res, table, req.body)
             console.log('back in main')
-            console.log('post stack', stack)
+            // console.log('post stack', stack)
+            return res.status(200).json(stack)
             if(stack.error) return send_error(res, stack.code, stack.table)
             // console.log('made it here')
 
-            const {table} = get.path(req.originalUrl)
+            
             const columns = await get.columns(table)
             const time = (new Date()).getTime()
             req.table = table
