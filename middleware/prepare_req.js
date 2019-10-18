@@ -25,9 +25,6 @@ const check_post = async (res, table, body) => {
     //make sure the user_id is unique
     if(table === 'users') body.user_id = uuid.v4()
     
-    //add created and updated times
-    body.created = body.updated = (new Date()).getTime()
-    // console.log({table: table, body: body})
     return body
 }
 
@@ -83,6 +80,8 @@ const multi_post = async (res, table, body, error = '') => {
     //filter out any extra fields from the current item
     const columns = await get.columns(table)
     body = get.body(columns, body)
+    //add created and updated times
+    body.created = body.updated = (new Date()).getTime()
     //add current item to the stack and push it up
     stack.push({table: table, body: body})
     return stack
