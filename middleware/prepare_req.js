@@ -39,6 +39,7 @@ const multi_post = async (res, table, body, error = '') => {
         const tbl = tbls[idx]
         //field has the same name as a table
         if(body.hasOwnProperty(tbl)) {
+            console.log('tbl', tbl)
             //check the value type of field in body
             //:array and object need to be checked and posted in the db
             //:string and integer need to be checked if they exist in the db
@@ -70,8 +71,8 @@ const multi_post = async (res, table, body, error = '') => {
                         //these will be filled in make_req with object id(s)
                         const type = get.schema_types(schema)[tbl]
                         if(type) type === 'ARRAY' ? body[tbl] = [] : body[tbl] = ''
-                        //check current stack item for more tables
-                        stack = await multi_post(res, tbl, post)
+                        //check current stack item for more tables and add them to current stack
+                        stack.push(...await multi_post(res, tbl, post))
                         break
                     } catch(err) {
                         console.log('err', err)
@@ -92,8 +93,9 @@ const multi_post = async (res, table, body, error = '') => {
     body.created = body.updated = (new Date()).getTime()
     //add current item to the stack and push it up
     stack.push({table: table, body: body})
+    // console.log('table', table, 'stack', stack)
 
-    console.log(`stack:`, stack, `\n`)
+    // console.log(`stack:`, stack, `\n`)
     return stack
 }
 
