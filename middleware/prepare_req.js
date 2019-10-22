@@ -31,6 +31,10 @@ const check_post = async (res, table, body) => {
 const multi_post = async (res, table, body, error = '') => {
     let stack = []
     const tbls = await tables() //move this outside of the loop, only need it once
+    const schema = await get.schema(table)
+    const types = get.schema_types(schema)
+    // const columns = get.schema_types(schema)
+    // console.log('columns', schema)
     for(let idx in tbls) {
         const tbl = tbls[idx]
         //field has the same name as a table
@@ -56,14 +60,18 @@ const multi_post = async (res, table, body, error = '') => {
                     } catch(err) {return (error = 'C0001')}
                 //objects should have all required and unique fields
                 case 'object': try {
-                        // console.log('object table', tbl)
-                        // console.log('tbl', tbl, 'bdy', body[tbl])
+                        //check to make sure the current post is valid
                         let post = await check_post(res, tbl, body[tbl])
+                        //if it's not throw an error
                         if(post.error) return post
+                        //don't add the full object to the current stack item
+                        //if it's an array if ids, add an empty array
+                        //if it's an int or string, add an empty string
+                        //these will be filled in make_req with object id(s)
+                        const type = get.schema_types(schema)[tbl]
+                        if(type) type === 'ARRAY' ? body[tbl] = [] : body[tbl] = ''
+                        //check current stack item for more tables
                         stack = await multi_post(res, tbl, post)
-                        console.log('new stack item', stack)
-                        /////////////////
-                        // stack.push({table: tbl, body: post})
                         break
                     } catch(err) {
                         console.log('err', err)
@@ -77,13 +85,15 @@ const multi_post = async (res, table, body, error = '') => {
             }
         }
     }
-    //filter out any extra fields from the current item
-    const columns = await get.columns(table)
+    const columns = get.schema_columns(schema)
+
     body = get.body(columns, body)
     //add created and updated times
     body.created = body.updated = (new Date()).getTime()
     //add current item to the stack and push it up
     stack.push({table: table, body: body})
+
+    console.log(`stack:`, stack, `\n`)
     return stack
 }
 
