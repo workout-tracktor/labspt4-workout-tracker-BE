@@ -11,41 +11,18 @@ schema = async table => {
                 .reduce((obj,val) => (obj[val]=null,obj), {})
     const types = Object.assign({}, ...columns
                 .map(field => {return {[field]: schematics[field].type}}))
-    
+    const fill = body => {
+        return Object.assign({}, ...Object.keys(empty)
+                .map(field => {return {[field]: body[field] || null}}))
+    }
     return {
+        table,
         columns,
         empty,
         types,
+        fill,
     }
 }
-
-//HELPERS
-// schema = async table => {
-//     // console.log('table', table)
-//     const that = await db(table).columnInfo()
-//     // console.log('that', that)
-//     return that
-// }
-
-//returns an object of each column with a null value
-// schema_empty = schema => 
-//     schema
-//         .filter(val => val !== 'id')
-//         .reduce((obj,val) => (obj[val]=null,obj), {})
-
-// //returns an object of each column and it's type
-// schema_types = schema => {
-//     Object.keys(schema)
-//         .forEach(field => {
-//             Object.keys(schema[field])
-//                 .forEach(key => {if(key === 'type') schema[field] = schema[field][key]})
-//         })
-//     return schema
-// }
-
-//returns an array of each column name
-// schema_columns = schema => 
-//     Object.keys(schema)
 
 path = path => {
     let table = path.split('/')[2].split('?')[0]

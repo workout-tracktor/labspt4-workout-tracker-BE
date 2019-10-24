@@ -6,7 +6,7 @@ const {add_one, get_one, get_all, update_one, remove_one, remove_all} = require(
 const {send_error} = require('./helpers/errors')
 
 //check every 
-const check_post = async (res, table, body) => {
+const check_post = async (table, body) => {
     //check if all required fields are present
     const {required_fields, missing_fields} = await check.required(table, body)
     if(missing_fields.length > 0)
@@ -23,6 +23,9 @@ const check_post = async (res, table, body) => {
 
     //make sure the user_id is unique
     if(table === 'users') body.user_id = uuid.v4()
+
+    const schema = await get.schema(table)
+    body = schema.fill(body)
     
     return body
 }
@@ -38,7 +41,6 @@ const multi_post = async (res, table, body, error = '') => {
         const tbl = tbls[idx]
         //field has the same name as a table
         if(body.hasOwnProperty(tbl)) {
-            console.log('tbl', tbl)
             //check the value type of field in body
             //:array and object need to be checked and posted in the db
             //:string and integer need to be checked if they exist in the db
@@ -61,7 +63,7 @@ const multi_post = async (res, table, body, error = '') => {
                 //objects should have all required and unique fields
                 case 'object': try {
                         //check to make sure the current post is valid
-                        let post = await check_post(res, tbl, body[tbl])
+                        let post = await check_post(tbl, body[tbl])
                         //if it's not throw an error
                         if(post.error) return post
                         //don't add the full object to the current stack item
@@ -85,16 +87,12 @@ const multi_post = async (res, table, body, error = '') => {
             }
         }
     }
-    const columns = schema.columns
-
-    body = get.body(columns, body)
-    //add created and updated times
+    //body should include all fields, not just the ones with data
+    body = schema.fill(body)
+    //add created and updated fields (switch this to timestamps(true, true))
     body.created = body.updated = (new Date()).getTime()
-    //add current item to the stack and push it up
+    //add current item to the stack
     stack.push({table: table, body: body})
-    // console.log('table', table, 'stack', stack)
-
-    // console.log(`stack:`, stack, `\n`)
     return stack
 }
 
@@ -104,7 +102,7 @@ module.exports = async (req, res, next) => {
             const {table} = get.path(req.originalUrl)
             req.stack = await multi_post(res, table, req.body)
             // console.log('post stack', req.stack)
-            // return res.status(200).json(stack)
+            return res.status(200).json(req.stack)
             if(req.stack.error) return send_error(res, req.stack.code, req.stack.table)
             next()
             break
