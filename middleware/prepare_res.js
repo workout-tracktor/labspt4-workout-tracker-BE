@@ -47,16 +47,16 @@ const fill_struct = async (struct, values) => {
 }
 
 module.exports = async (req, res, next) => {
-    const struct = schema[req.table]
-    let test = []
-    if(req.method === 'DELETE' && req.array) next()
-    if(req.array)
-        for(let i=0; i<req.response.length; i++) {
-            test.push(await fill_struct(struct, req.response[i]))
-        }
-    else
-        test = await fill_struct(struct, req.response)
+    // const struct = schema[req.table]
+    // let test = []
+    // if(req.method === 'DELETE' && req.array) next()
+    // if(req.array)
+    //     for(let i=0; i<req.response.length; i++) {
+    //         test.push(await fill_struct(struct, req.response[i]))
+    //     }
+    // else
+    //     test = await fill_struct(struct, req.response)
 
-    req.response = test
+    // req.response = test
     next()
 }

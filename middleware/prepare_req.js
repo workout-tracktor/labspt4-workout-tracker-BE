@@ -7,7 +7,6 @@ const {send_error} = require('./helpers/errors')
 
 //check every 
 const check_post = async (res, table, body) => {
-    console.log('yerp')
     //check if all required fields are present
     const {required_fields, missing_fields} = await check.required(table, body)
     if(missing_fields.length > 0)
@@ -32,7 +31,7 @@ const multi_post = async (res, table, body, error = '') => {
     let stack = []
     const tbls = await tables() //move this outside of the loop, only need it once
     const schema = await get.schema(table)
-    const types = get.schema_types(schema)
+    const types = schema.types
     // const columns = get.schema_types(schema)
     // console.log('columns', schema)
     for(let idx in tbls) {
@@ -69,7 +68,7 @@ const multi_post = async (res, table, body, error = '') => {
                         //if it's an array if ids, add an empty array
                         //if it's an int or string, add an empty string
                         //these will be filled in make_req with object id(s)
-                        const type = get.schema_types(schema)[tbl]
+                        const type = schema.types[tbl]
                         if(type) type === 'ARRAY' ? body[tbl] = [] : body[tbl] = ''
                         //check current stack item for more tables and add them to current stack
                         stack.push(...await multi_post(res, tbl, post))
@@ -86,7 +85,7 @@ const multi_post = async (res, table, body, error = '') => {
             }
         }
     }
-    const columns = get.schema_columns(schema)
+    const columns = schema.columns
 
     body = get.body(columns, body)
     //add created and updated times
@@ -103,28 +102,17 @@ module.exports = async (req, res, next) => {
     switch(req.method) {
         case 'POST': {
             const {table} = get.path(req.originalUrl)
-            const stack = await multi_post(res, table, req.body)
-            console.log('back in main')
-            // console.log('post stack', stack)
-            return res.status(200).json(stack)
-            if(stack.error) return send_error(res, stack.code, stack.table)
-            // console.log('made it here')
-
-            
-            const columns = await get.columns(table)
-            const time = (new Date()).getTime()
-            req.table = table
-            req.body = get.body(columns, req.body)
-            if(req.table === 'users') req.body.user_id = uuid.v4()
-            req.body.created = time
-            req.body.updated = time
-            req.status = 201
+            req.stack = await multi_post(res, table, req.body)
+            // console.log('post stack', req.stack)
+            // return res.status(200).json(stack)
+            if(req.stack.error) return send_error(res, req.stack.code, req.stack.table)
             next()
             break
         }
         case 'GET': {
             const {array, table} = get.path(req.originalUrl)
-            const columns = await get.columns(table)
+            const schema = await get.schema(table)
+            const columns = schema.columns
             const {query} = get.params(columns, req.query)
             req.table = table
             req.array = array
@@ -135,7 +123,8 @@ module.exports = async (req, res, next) => {
         }
         case 'PUT': {
             const {table} = get.path(req.originalUrl)
-            const columns = await get.columns(table)
+            const schema = await get.schema(table)
+            const columns = schema.columns
             const time = (new Date()).getTime()
             req.table = table
             req.body = get.body(columns, req.body)

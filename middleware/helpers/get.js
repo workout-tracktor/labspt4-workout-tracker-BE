@@ -3,33 +3,49 @@ const db = require('../../data/dbConfig')
 const remove = require('../helpers/remove')
 const replace = require('../helpers/replace')
 
-//HELPERS
 schema = async table => {
-    // console.log('table', table)
-    const that = await db(table).columnInfo()
-    // console.log('that', that)
-    return that
+    const schematics = await db(table).columnInfo()
+    const columns = Object.keys(schematics)
+    const empty = columns
+                .filter(val => val !== 'id')
+                .reduce((obj,val) => (obj[val]=null,obj), {})
+    const types = Object.assign({}, ...columns
+                .map(field => {return {[field]: schematics[field].type}}))
+    
+    return {
+        columns,
+        empty,
+        types,
+    }
 }
+
+//HELPERS
+// schema = async table => {
+//     // console.log('table', table)
+//     const that = await db(table).columnInfo()
+//     // console.log('that', that)
+//     return that
+// }
 
 //returns an object of each column with a null value
-schema_empty = schema => 
-    schema
-        .filter(val => val !== 'id')
-        .reduce((obj,val) => (obj[val]=null,obj), {})
+// schema_empty = schema => 
+//     schema
+//         .filter(val => val !== 'id')
+//         .reduce((obj,val) => (obj[val]=null,obj), {})
 
-//returns an object of each column and it's type
-schema_types = schema => {
-    Object.keys(schema)
-        .forEach(field => {
-            Object.keys(schema[field])
-                .forEach(key => {if(key === 'type') schema[field] = schema[field][key]})
-        })
-    return schema
-}
+// //returns an object of each column and it's type
+// schema_types = schema => {
+//     Object.keys(schema)
+//         .forEach(field => {
+//             Object.keys(schema[field])
+//                 .forEach(key => {if(key === 'type') schema[field] = schema[field][key]})
+//         })
+//     return schema
+// }
 
 //returns an array of each column name
-schema_columns = schema => 
-    Object.keys(schema)
+// schema_columns = schema => 
+//     Object.keys(schema)
 
 path = path => {
     let table = path.split('/')[2].split('?')[0]
@@ -51,8 +67,8 @@ unique = async table =>
         .then(constraints => constraints.rows)
         .map(row => row.constraint_name.split('_').filter(word => word !== table && word !== 'unique').join('_'))
 
-columns = async table =>
-    Object.keys(await db(table).columnInfo())
+// columns = async table =>
+//     Object.keys(await db(table).columnInfo())
 
 required = async table => {
     const not_required = ['id', table.slice(0, -1) + '_id', 'timestamp'] //move this to middleware
@@ -102,7 +118,8 @@ module.exports = {
     unique,
     tables,
     schema,
-    schema_empty,
-    schema_columns,
-    schema_types
+    // schema_empty,
+    // schema_columns,
+    // schema_types,
+    // Schema,
 }

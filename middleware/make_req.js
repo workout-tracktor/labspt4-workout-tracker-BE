@@ -2,14 +2,17 @@ const {add_one, get_one, get_all, update_one, remove_one, remove_all} = require(
 const {send_error} = require('./helpers/errors')
 const {tables} = require('./helpers/get')
 
-
-
 module.exports = async (req, res, next) => {
     switch(req.method) {
         case 'POST': {
             try {
-                req.response = await add_one(req.table, req.body)
+                //loops through the stack, stores the last item (the initial item called) in the response
+                req.response = {}
+                for(let i=0; i<req.stack.length; i++) {
+                    req.response = await add_one(req.stack[i].table, req.stack[i].body)
+                }
                 if(!req.response) return send_error(res, '61204', req.table)
+                req.status = 201
                 next()
             } catch (err) {
                 return send_error(res, err.code, req.table)
