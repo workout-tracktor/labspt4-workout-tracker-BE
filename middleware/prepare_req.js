@@ -34,9 +34,7 @@ const multi_post = async (res, table, body, error = '') => {
     let stack = []
     const tbls = await tables() //move this outside of the loop, only need it once
     const schema = await get.schema(table)
-    const types = schema.types
-    // const columns = get.schema_types(schema)
-    // console.log('columns', schema)
+    // console.log('body', body)
     for(let idx in tbls) {
         const tbl = tbls[idx]
         //field has the same name as a table
@@ -46,7 +44,6 @@ const multi_post = async (res, table, body, error = '') => {
             //:string and integer need to be checked if they exist in the db
             let type = Array.isArray(body[tbl]) ? 'array' : typeof body[tbl]
             if(type === 'number') type = Number.isInteger(body[tbl]) ? 'integer' : 'number'
-            // console.log('type', type)
             switch(type) {
                 //: no id should be type number
                 case 'number': return (error = 'C0001')
@@ -54,12 +51,11 @@ const multi_post = async (res, table, body, error = '') => {
                 //no need to post; just check if the id is valid
                 case 'string':
                 case 'integer': try {
-                        const field_name = type === 'string' ? tbl.slice(0,-1)+'_id' : 'id'
-                        const id = (await get_one(tbl, {[field_name]: body[tbl]})).id
-                        if(!id) console.log(`${field_name} is invalid`)
-                        else body[tbl] = [id]
-                        break
-                    } catch(err) {return (error = 'C0001')}
+                    const field_name = type === 'string' ? tbl.slice(0,-1)+'_id' : 'id'
+                    const id = (await get_one(tbl, {[field_name]: body[tbl]})).id
+                    if(id) body[tbl] = [id]
+                    break
+                } catch(err) {return {error: true, table: tbl, code: 'C0001'}}
                 //objects should have all required and unique fields
                 case 'object': try {
                         //check to make sure the current post is valid
@@ -80,10 +76,14 @@ const multi_post = async (res, table, body, error = '') => {
                         return {error: true, table: tbl, code: 'C0002'}
                     }
                 case 'array': try {
-                        console.log('an array was sent')
-                    } catch(err) {
-                        return {error: true, table: tbl, code: 'C0003'}
+                    console.log('made it to array', body[tbl])
+                    for(idx in body[tbl]) {
+                        //can't check id's
+                        //need to bring check tables outside of multipost
                     }
+                } catch(err) {
+                    return {error: true, table: tbl, code: 'C0003'}
+                }
             }
         }
     }
