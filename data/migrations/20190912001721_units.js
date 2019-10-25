@@ -7,10 +7,16 @@ exports.up = (knex) =>
         tbl.text('name')
             .unique()
             .notNullable()
-        tbl.bigint('created')
+        tbl.text('name_plural')
             .notNullable()
-        tbl.bigint('updated')
+        tbl.text('abrv')
             .notNullable()
+        tbl.text('system')
+            .notNullable()
+            .defaultTo('standard')
+        tbl.text('purpose')
+            .notNullable()
+        tbl.timestamps(true, true)
     })
 
 exports.down = (knex) =>

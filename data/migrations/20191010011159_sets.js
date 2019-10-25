@@ -13,10 +13,7 @@ exports.up = (knex) =>
             .inTable('units')
         tbl.float('distance')
         tbl.integer('reps')
-        tbl.bigint('created')
-            .notNullable()
-        tbl.bigint('updated')
-            .notNullable()
+        tbl.timestamps(true, true)
     })
 
 exports.down = (knex) =>

@@ -17,8 +17,6 @@ exports.seed = function(knex) {
           weight: 1,
           duration: 1,
           workout_complete: true,
-          created: 112,
-          updated: 113
         },
         {
           id: 2,
@@ -32,8 +30,6 @@ exports.seed = function(knex) {
           weight: 1,
           duration: 1,
           workout_complete: true,
-          created: 112,
-          updated: 113
         },        {
           id: 3,
           user_id: "1",
@@ -46,8 +42,6 @@ exports.seed = function(knex) {
           weight: 1,
           duration: 1,
           workout_complete: true,
-          created: 112,
-          updated: 113
         },        {
           id: 4,
           user_id: "1",
@@ -60,8 +54,6 @@ exports.seed = function(knex) {
           weight: 1,
           duration: 1,
           workout_complete: true,
-          created: 112,
-          updated: 113
         }
       ]);
     });

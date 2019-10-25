@@ -17,10 +17,7 @@ exports.up = (knex) =>
         tbl.text('description')
         tbl.bool('completed')
         tbl.text('workout_type')
-        tbl.bigint('created')
-            .notNullable()
-        tbl.bigint('updated')
-            .notNullable()
+        tbl.timestamps(true, true)
     })
 
 exports.down = (knex) =>

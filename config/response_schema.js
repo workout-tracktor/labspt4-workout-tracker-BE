@@ -1,8 +1,13 @@
 module.exports = {
     users: {
-        username: '',
         user_id: '',
-        email: ''
+        username: '',
+        email: '',
+        first_name: '',
+        last_name: '',
+        body_goal: '',
+        unit_system: '',
+        avatar: '',
     },
     exercises: {
         name: '',
@@ -12,7 +17,12 @@ module.exports = {
         created: '',
     },
     units: {
+        id: '',
         name: '',
+        name_plural: '',
+        abrv: '',
+        system: '',
+        purpose: '',
     },
     equipment: {
         name: '',
