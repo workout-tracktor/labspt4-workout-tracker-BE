@@ -5,10 +5,13 @@ module.exports = async (req, res, next) => {
     switch(req.method) {
         case 'POST': {
             try {
+
                 req.response = await add(req.table, req.body)
                 if(!req.response) return send_error(res, '61204', req.table)
+
                 next()
             } catch (err) {
+                console.log('err', err)
                 return send_error(res, err.code, req.table)
             }
             break

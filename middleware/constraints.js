@@ -11,7 +11,7 @@ const check = require('./helpers/check')
 const {send_error} = require('./helpers/errors')
 
 const requirements = async (table, body) => {
-    const not_required = ['created', 'updated']
+    const not_required = ['created_at', 'updated_at']
     const required_fields = (await get.required(table)).filter(field => not_required.indexOf(field) === -1)
     const missing_fields = required_fields.filter(field => !body.hasOwnProperty(field))
     return {required_fields: required_fields, missing_fields: missing_fields}
@@ -27,15 +27,15 @@ module.exports =  async (req, res, next) => {
     switch(req.method) {
         case 'POST': {
             const {table} = get.path(req.originalUrl)
-
+            
             //check if all required fields are present
             const {required_fields, missing_fields} = await requirements(table, req.body)
             if(missing_fields.length) return send_error(res, '23502', table, missing_fields, required_fields)
-
+            
             //check if all unique fields are in fact unique
             const {unique_fields, unremarkable_fields} = await unique(table, req.body)
             if(unremarkable_fields.length) return send_error(res, '23505', table, unique_fields, unremarkable_fields)
-
+            
             next()
             break
         }

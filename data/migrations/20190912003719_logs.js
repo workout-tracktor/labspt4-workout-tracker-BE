@@ -29,10 +29,7 @@ exports.up = (knex) =>
         tbl.bool('workout_complete')
             .notNullable()
             .defaultTo(false)
-        tbl.bigint('created')
-            .notNullable()
-        tbl.bigint('updated')
-            .notNullable()
+        tbl.timestamps(true, true)
     })
 
 exports.down = (knex) =>

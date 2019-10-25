@@ -10,10 +10,7 @@ exports.up = (knex) =>
         tbl.specificType('exercise_ids', 'INT[]')
         tbl.specificType('exercise_description', 'text[]')
         tbl.text('description')
-        tbl.bigint('created')
-            .notNullable()
-        tbl.bigint('updated')
-            .notNullable()
+        tbl.timestamps(true, true)
     })
 
 exports.down = (knex) =>

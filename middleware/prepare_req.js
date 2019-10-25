@@ -10,8 +10,6 @@ module.exports = async (req, res, next) => {
             req.table = table
             req.body = get.body(columns, req.body)
             if(req.table === 'users') req.body.user_id = uuid.v4()
-            req.body.created = time
-            req.body.updated = time
             req.status = 201
             next()
             break
@@ -33,7 +31,6 @@ module.exports = async (req, res, next) => {
             const time = (new Date()).getTime()
             req.table = table
             req.body = get.body(columns, req.body)
-            req.body.updated = time
             req.status = 200
             next()
             break
