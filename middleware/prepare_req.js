@@ -36,7 +36,6 @@ const check_id = async (table, id) => {
 }
 
 const multi_post = async (res, table, body, error = '') => {
-    console.clear()
     // console.log('table', table)
     // console.log('body', body)
     let stack = []
@@ -85,10 +84,10 @@ const multi_post = async (res, table, body, error = '') => {
                         return {error: true, table: tbl, code: 'C0002'}
                     }
                 case 'array': try {
-                    console.log('made it to array', body[tbl])
-                    for(idx in body[tbl]) {
-                        //can't check id's
-                        //need to bring check tables outside of multipost
+                    //loop through given array and remove invalid ids
+                    for(let i=body[tbl].length-1; i>=0; i--) {
+                        //check type of each element
+                        if(!await check_id(tbl, body[tbl][i])) body[tbl].splice(i,1)
                     }
                 } catch(err) {
                     return {error: true, table: tbl, code: 'C0003'}
@@ -98,8 +97,8 @@ const multi_post = async (res, table, body, error = '') => {
     }
     //body should include all fields, not just the ones with data
     body = schema.fill(body)
-    console.clear()
-    console.log('body', body)
+    // console.clear()
+    // console.log('body', body)
     //add current item to the stack
     stack.push({table: table, body: body})
     return stack
