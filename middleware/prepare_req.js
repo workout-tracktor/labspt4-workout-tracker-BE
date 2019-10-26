@@ -24,13 +24,21 @@ const check_post = async (table, body) => {
     //make sure the user_id is unique
     if(table === 'users') body.user_id = uuid.v4()
 
+    //return full object with filled values
     const schema = await get.schema(table)
-    body = schema.fill(body)
-    
-    return body
+    return schema.fill(body)
+}
+
+const check_id = async (table, id) => {
+    const field_name = typeof id === 'string' ? table.slice(0,-1)+'_id' : 'id'
+    const res = (await get_one(table, {[field_name]: id}))
+    return Boolean(res)
 }
 
 const multi_post = async (res, table, body, error = '') => {
+    console.clear()
+    // console.log('table', table)
+    // console.log('body', body)
     let stack = []
     const tbls = await tables() //move this outside of the loop, only need it once
     const schema = await get.schema(table)
@@ -51,9 +59,10 @@ const multi_post = async (res, table, body, error = '') => {
                 //no need to post; just check if the id is valid
                 case 'string':
                 case 'integer': try {
-                    const field_name = type === 'string' ? tbl.slice(0,-1)+'_id' : 'id'
-                    const id = (await get_one(tbl, {[field_name]: body[tbl]})).id
-                    if(id) body[tbl] = [id]
+                    //check to make sure id is valid
+                    if(await check_id(tbl, body[tbl]))
+                        //if db requires an array, put it in an array
+                        if(schema.types[tbl] === 'ARRAY') body[tbl] = [body[tbl]]
                     break
                 } catch(err) {return {error: true, table: tbl, code: 'C0001'}}
                 //objects should have all required and unique fields
@@ -89,8 +98,8 @@ const multi_post = async (res, table, body, error = '') => {
     }
     //body should include all fields, not just the ones with data
     body = schema.fill(body)
-    //add created and updated fields (switch this to timestamps(true, true))
-    body.created = body.updated = (new Date()).getTime()
+    console.clear()
+    console.log('body', body)
     //add current item to the stack
     stack.push({table: table, body: body})
     return stack
@@ -103,6 +112,7 @@ module.exports = async (req, res, next) => {
             req.stack = await multi_post(res, table, req.body)
             // console.log('post stack', req.stack)
             return res.status(200).json(req.stack)
+            ////////////////////////////////////////////////
             if(req.stack.error) return send_error(res, req.stack.code, req.stack.table)
             next()
             break
