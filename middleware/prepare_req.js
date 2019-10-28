@@ -5,8 +5,15 @@ const check = require('./helpers/check')
 const {add_one, get_one, get_all, update_one, remove_one, remove_all} = require('../config/models')
 const {send_error} = require('./helpers/errors')
 
-//check every 
-const check_post = async (table, body) => {
+//check and return value type
+const get_type = value => {
+    let type = Array.isArray(value) ? 'array' : typeof value
+    if(type === 'number') type = Number.isInteger(value) ? 'integer' : 'number'
+    return type
+}
+
+//check if object if legit and prepares it for the stack
+const check_object = async (table, body) => {
     //check if all required fields are present
     const {required_fields, missing_fields} = await check.required(table, body)
     if(missing_fields.length > 0)
@@ -35,80 +42,63 @@ const check_id = async (table, id) => {
     return Boolean(res)
 }
 
-const multi_post = async (res, table, body, error = '') => {
-    // console.log('table', table)
-    // console.log('body', body)
+const router = async (table, body, expected_type) => {
+    let thereturned = {}
+    switch(get_type(body)) {
+        case 'number': return (error = 'C0001')
+        case 'string':
+        case 'integer':
+            if(await check_id(table, body)) {
+                if(expected_type === 'ARRAY') thereturned.body = [body]
+                thereturned.body = body
+            }
+            else thereturned.error = true
+            break
+        case 'object':
+            const stack_item = await check_object(table, body)
+            if(stack_item.error) thereturned.error = stack_item.error
+            else thereturned.stack = {table: table, body: body}
+            break
+        case 'array':
+            for(let i=body.length-1; i>=0; i--) {
+                const stack_item = await router(table, body[i])
+                if(stack_item.body)
+                    if(thereturned.body) thereturned.body.push(stack_item.body)
+                    else thereturned.body = [stack_item.body]
+                if(stack_item.stack)
+                    if(thereturned.stack) thereturned.stack.push(stack_item.stack)
+                    else thereturned.stack = [stack_item.stack]
+            }
+    }
+    return thereturned
+}
+
+const postception = async (res, table, body, error = '') => {
     let stack = []
     const tbls = await tables() //move this outside of the loop, only need it once
     const schema = await get.schema(table)
-    // console.log('body', body)
     for(let idx in tbls) {
         const tbl = tbls[idx]
         //field has the same name as a table
         if(body.hasOwnProperty(tbl)) {
-            //check the value type of field in body
-            //:array and object need to be checked and posted in the db
-            //:string and integer need to be checked if they exist in the db
-            let type = Array.isArray(body[tbl]) ? 'array' : typeof body[tbl]
-            if(type === 'number') type = Number.isInteger(body[tbl]) ? 'integer' : 'number'
-            switch(type) {
-                //: no id should be type number
-                case 'number': return (error = 'C0001')
-                //both string and number indicate an id is given
-                //no need to post; just check if the id is valid
-                case 'string':
-                case 'integer': try {
-                    //check to make sure id is valid
-                    if(await check_id(tbl, body[tbl]))
-                        //if db requires an array, put it in an array
-                        if(schema.types[tbl] === 'ARRAY') body[tbl] = [body[tbl]]
-                    break
-                } catch(err) {return {error: true, table: tbl, code: 'C0001'}}
-                //objects should have all required and unique fields
-                case 'object': try {
-                        //check to make sure the current post is valid
-                        let post = await check_post(tbl, body[tbl])
-                        //if it's not throw an error
-                        if(post.error) return post
-                        //don't add the full object to the current stack item
-                        //if it's an array if ids, add an empty array
-                        //if it's an int or string, add an empty string
-                        //these will be filled in make_req with object id(s)
-                        const type = schema.types[tbl]
-                        if(type) type === 'ARRAY' ? body[tbl] = [] : body[tbl] = ''
-                        //check current stack item for more tables and add them to current stack
-                        stack.push(...await multi_post(res, tbl, post))
-                        break
-                    } catch(err) {
-                        console.log('err', err)
-                        return {error: true, table: tbl, code: 'C0002'}
-                    }
-                case 'array': try {
-                    //loop through given array and remove invalid ids
-                    for(let i=body[tbl].length-1; i>=0; i--) {
-                        //check type of each element
-                        if(!await check_id(tbl, body[tbl][i])) body[tbl].splice(i,1)
-                    }
-                } catch(err) {
-                    return {error: true, table: tbl, code: 'C0003'}
-                }
-            }
+            const stack_item = await router(tbl, body[tbl], schema.types[tbl])
+            if(stack_item.error) return stack_item
+            if(stack_item.stack) stack.push(stack_item.stack)
         }
     }
     //body should include all fields, not just the ones with data
     body = schema.fill(body)
-    // console.clear()
-    // console.log('body', body)
     //add current item to the stack
     stack.push({table: table, body: body})
     return stack
 }
 
 module.exports = async (req, res, next) => {
+    console.clear()
     switch(req.method) {
         case 'POST': {
             const {table} = get.path(req.originalUrl)
-            req.stack = await multi_post(res, table, req.body)
+            req.stack = await postception(res, table, req.body)
             // console.log('post stack', req.stack)
             return res.status(200).json(req.stack)
             ////////////////////////////////////////////////
