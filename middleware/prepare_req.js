@@ -57,7 +57,8 @@ const router = async (table, body, expected_type) => {
         case 'object':
             const stack_item = await check_object(table, body)
             if(stack_item.error) thereturned.error = stack_item.error
-            else thereturned.stack = {table: table, body: body}
+                if(thereturned.stack) thereturned.stack.push({table: table, body: body})
+                else thereturned.stack = [{table: table, body: body}]
             break
         case 'array':
             for(let i=body.length-1; i>=0; i--) {
@@ -66,14 +67,14 @@ const router = async (table, body, expected_type) => {
                     if(thereturned.body) thereturned.body.push(stack_item.body)
                     else thereturned.body = [stack_item.body]
                 if(stack_item.stack)
-                    if(thereturned.stack) thereturned.stack.push(stack_item.stack)
-                    else thereturned.stack = [stack_item.stack]
+                    if(thereturned.stack) thereturned.stack.push(...stack_item.stack)
+                    else thereturned.stack = [...stack_item.stack]
             }
     }
     return thereturned
 }
 
-const postception = async (res, table, body, error = '') => {
+const postception = async (table, body, error = '') => {
     let stack = []
     const tbls = await tables() //move this outside of the loop, only need it once
     const schema = await get.schema(table)
@@ -83,7 +84,8 @@ const postception = async (res, table, body, error = '') => {
         if(body.hasOwnProperty(tbl)) {
             const stack_item = await router(tbl, body[tbl], schema.types[tbl])
             if(stack_item.error) return stack_item
-            if(stack_item.stack) stack.push(stack_item.stack)
+            if(stack_item.stack) stack.push(...stack_item.stack)
+            if(stack_item.body) body[tbl] = stack_item.body
         }
     }
     //body should include all fields, not just the ones with data
@@ -98,10 +100,8 @@ module.exports = async (req, res, next) => {
     switch(req.method) {
         case 'POST': {
             const {table} = get.path(req.originalUrl)
-            req.stack = await postception(res, table, req.body)
-            // console.log('post stack', req.stack)
+            req.stack = await postception(table, req.body)
             return res.status(200).json(req.stack)
-            ////////////////////////////////////////////////
             if(req.stack.error) return send_error(res, req.stack.code, req.stack.table)
             next()
             break
