@@ -3,7 +3,7 @@ const {send_error} = require('./helpers/errors')
 const {tables} = require('./helpers/get')
 
 module.exports = async (req, res, next) => {
-    console.clear()
+    console.log('made it here mr')
     switch(req.method) {
         case 'POST': {
             try {

@@ -53,13 +53,12 @@ const router = async (table, body, expected_type) => {
                 if(expected_type === 'ARRAY') thereturned.body = [body]
                 thereturned.body = body
             }
-            else thereturned.error = true
             break
         case 'object':
             const stack_item = await check_object(table, body)
             if(stack_item.error) thereturned.error = stack_item.error
-                if(thereturned.stack) thereturned.stack.push({table: table, body: body})
-                else thereturned.stack = [{table: table, body: stack_item}]
+            if(thereturned.stack) thereturned.stack.push({table: table, body: body})
+            else thereturned.stack = [{table: table, body: stack_item}]
             break
         case 'array':
             for(let i=body.length-1; i>=0; i--) {
@@ -72,7 +71,6 @@ const router = async (table, body, expected_type) => {
                     else thereturned.stack = [...stack_item.stack]
             }
     }
-
     return thereturned
 }
 
@@ -87,6 +85,7 @@ const postception = async (table, body, tables) => {
             if(stack_item.error) return stack_item
             if(stack_item.stack) stack.push(...stack_item.stack)
             if(stack_item.body) body[tbl] = stack_item.body
+            else body[tbl] = schema.types[tbl] === 'ARRAY' ? [] : null
         }
     }
     //body should include all fields, not just the ones with data
@@ -102,8 +101,11 @@ module.exports = async (req, res, next) => {
         case 'POST': {
             const {table} = get.path(req.originalUrl)
             req.stack = await postception(table, req.body, await tables())
-            return res.status(200).json(req.stack)
             if(req.stack.error) return send_error(res, req.stack.code, req.stack.table)
+            return res.status(200).json(req.stack)
+            console.log('made it here pr')
+            console.log('err', req.stack.error)
+            console.log('made it here pr2')
             next()
             break
         }

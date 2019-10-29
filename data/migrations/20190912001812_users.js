@@ -25,10 +25,7 @@ exports.up = (knex) =>
             .references('id')
             .inTable('units')
         tbl.text('avatar')
-        tbl.bigint('created')
-            .notNullable()
-        tbl.bigint('updated')
-            .notNullable()
+        tbl.timestamps(true, true)
     })
 
 exports.down = (knex) =>

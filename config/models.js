@@ -7,8 +7,8 @@ const db = require('../data/dbConfig')
 //:adds and returns new row to given table
 const add_one = async (tbl, obj) => {
     try {
-    await db(tbl).insert(obj)
-    return await db(tbl).where(obj).first()
+        await db(tbl).insert(obj)
+        return await db(tbl).where(obj).first()
     } catch(err) {
         console.log(`\n`, err, `\n`)
     }
