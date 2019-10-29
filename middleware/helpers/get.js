@@ -6,15 +6,15 @@ const replace = require('../helpers/replace')
 schema = async table => {
     const schematics = await db(table).columnInfo()
     const columns = Object.keys(schematics)
+                .filter(field => field !== 'created_at' && field !== 'updated_at')
     const empty = columns
                 .filter(val => val !== 'id')
                 .reduce((obj,val) => (obj[val]=null,obj), {})
     const types = Object.assign({}, ...columns
                 .map(field => {return {[field]: schematics[field].type}}))
-    const fill = body => {
-        return Object.assign({}, ...Object.keys(empty)
+    const fill = body => Object.assign({}, ...Object.keys(empty)
                 .map(field => {return {[field]: body[field] || null}}))
-    }
+    
     return {
         table,
         columns,

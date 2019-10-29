@@ -33,6 +33,7 @@ const check_object = async (table, body) => {
 
     //return full object with filled values
     const schema = await get.schema(table)
+
     return schema.fill(body)
 }
 
@@ -58,7 +59,7 @@ const router = async (table, body, expected_type) => {
             const stack_item = await check_object(table, body)
             if(stack_item.error) thereturned.error = stack_item.error
                 if(thereturned.stack) thereturned.stack.push({table: table, body: body})
-                else thereturned.stack = [{table: table, body: body}]
+                else thereturned.stack = [{table: table, body: stack_item}]
             break
         case 'array':
             for(let i=body.length-1; i>=0; i--) {
@@ -71,15 +72,15 @@ const router = async (table, body, expected_type) => {
                     else thereturned.stack = [...stack_item.stack]
             }
     }
+
     return thereturned
 }
 
-const postception = async (table, body, error = '') => {
+const postception = async (table, body, tables) => {
     let stack = []
-    const tbls = await tables() //move this outside of the loop, only need it once
     const schema = await get.schema(table)
-    for(let idx in tbls) {
-        const tbl = tbls[idx]
+    for(let idx in tables) {
+        const tbl = tables[idx]
         //field has the same name as a table
         if(body.hasOwnProperty(tbl)) {
             const stack_item = await router(tbl, body[tbl], schema.types[tbl])
@@ -100,7 +101,7 @@ module.exports = async (req, res, next) => {
     switch(req.method) {
         case 'POST': {
             const {table} = get.path(req.originalUrl)
-            req.stack = await postception(table, req.body)
+            req.stack = await postception(table, req.body, await tables())
             return res.status(200).json(req.stack)
             if(req.stack.error) return send_error(res, req.stack.code, req.stack.table)
             next()

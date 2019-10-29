@@ -3,13 +3,18 @@ const {send_error} = require('./helpers/errors')
 const {tables} = require('./helpers/get')
 
 module.exports = async (req, res, next) => {
+    console.clear()
     switch(req.method) {
         case 'POST': {
             try {
+
                 //loops through the stack, stores the last item (the initial item called) in the response
                 req.response = {}
                 for(let i=0; i<req.stack.length; i++) {
+                    // console.log(req.stack[i].body)
                     req.response = await add_one(req.stack[i].table, req.stack[i].body)
+                    // console.log('made it here')
+
                 }
                 if(!req.response) return send_error(res, '61204', req.table)
                 req.status = 201
