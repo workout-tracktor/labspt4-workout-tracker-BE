@@ -3,20 +3,25 @@ const {send_error} = require('./helpers/errors')
 const {tables} = require('./helpers/get')
 
 module.exports = async (req, res, next) => {
-    console.log('made it here mr')
     switch(req.method) {
         case 'POST': {
             try {
-
                 //loops through the stack, stores the last item (the initial item called) in the response
-                req.response = {}
+                let responses = {}
                 for(let i=0; i<req.stack.length; i++) {
-                    // console.log(req.stack[i].body)
+                    //loop through previous responses, if key matches add id to current post request
+                    Object.keys(responses).forEach(key => {
+                        if(req.stack[i].body.hasOwnProperty(key)) {
+                            req.stack[i].body[key].push(...responses[key])
+                            delete responses[key]
+                        }
+                    })
                     req.response = await add_one(req.stack[i].table, req.stack[i].body)
-                    // console.log('made it here')
-
+                    if(req.response) 
+                        if(responses[req.stack[i].table]) responses[req.stack[i].table].push(req.response.id)
+                        else responses[req.stack[i].table] = [req.response.id]
                 }
-                if(!req.response) return send_error(res, '61204', req.table)
+                if(!req.response) return send_error(res, '61205', req.table)
                 req.status = 201
                 next()
             } catch (err) {

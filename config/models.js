@@ -5,14 +5,8 @@ const db = require('../data/dbConfig')
 
 //CREATE
 //:adds and returns new row to given table
-const add_one = async (tbl, obj) => {
-    try {
-        await db(tbl).insert(obj)
-        return await db(tbl).where(obj).first()
-    } catch(err) {
-        console.log(`\n`, err, `\n`)
-    }
-}
+const add_one = async (tbl, obj) =>
+    (await db(tbl).insert(obj).returning('*'))[0]
 
 //READ
 //:returns a single row from the given table fitting a set of requirements
