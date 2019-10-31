@@ -14,11 +14,8 @@ exports.seed = function(knex) {
           body_goal: "",
           first_name: "",
           last_name: "",
-          weight_units: 1,
-          distance_units: 3,
+          unit_system: "",
           avatar: "",
-          created: 111,
-          updated: 123
         }
       ]);
     });

@@ -12,15 +12,15 @@ module.exports =  async (req, res, next) => {
     switch(req.method) {
         case 'POST': {
             const {table} = get.path(req.originalUrl)
-
+            
             //check if all required fields are present
             const {required_fields, missing_fields} = await check.required(table, req.body)
             if(missing_fields.length) return send_error(res, '23502', table, missing_fields, required_fields)
-
+            
             //check if all unique fields are in fact unique
             const {unique_fields, unremarkable_fields} = await check.unique(table, req.body)
             if(unremarkable_fields.length) return send_error(res, '23505', table, unique_fields, unremarkable_fields)
-
+            
             next()
             break
         }

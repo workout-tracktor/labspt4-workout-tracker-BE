@@ -123,7 +123,6 @@ module.exports = async (req, res, next) => {
             const time = (new Date()).getTime()
             req.table = table
             req.body = get.body(columns, req.body)
-            req.body.updated = time
             req.status = 200
             next()
             break

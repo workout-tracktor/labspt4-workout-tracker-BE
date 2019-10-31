@@ -25,6 +25,7 @@ module.exports = async (req, res, next) => {
                 req.status = 201
                 next()
             } catch (err) {
+                console.log('err', err)
                 return send_error(res, err.code, req.table)
             }
             break

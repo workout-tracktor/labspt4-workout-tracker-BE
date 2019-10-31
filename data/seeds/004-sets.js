@@ -12,8 +12,6 @@ exports.seed = function(knex) {
           distance_units: 1,
           distance: 1,
           reps: 1,
-          created: 112,
-          updated: 113
         },
         {
           id: 2,
@@ -22,8 +20,6 @@ exports.seed = function(knex) {
           distance_units: 1,
           distance: 1,
           reps: 1,
-          created: 112,
-          updated: 113
         },
         {
           id: 3,
@@ -32,8 +28,6 @@ exports.seed = function(knex) {
           distance_units: 1,
           distance: 1,
           reps: 1,
-          created: 112,
-          updated: 113
         },
         {
           id: 4,
@@ -42,8 +36,6 @@ exports.seed = function(knex) {
           distance_units: 1,
           distance: 1,
           reps: 1,
-          created: 112,
-          updated: 113
         },
         {
           id: 5,
@@ -52,8 +44,6 @@ exports.seed = function(knex) {
           distance_units: 1,
           distance: 1,
           reps: 1,
-          created: 112,
-          updated: 113
         }
       ]);
     });
