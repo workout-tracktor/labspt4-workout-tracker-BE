@@ -3,11 +3,26 @@ const db = require('../../data/dbConfig')
 const remove = require('../helpers/remove')
 const replace = require('../helpers/replace')
 
-//HELPERS
-schema = columns => 
-    columns
-        .filter(val => val !== 'id')
-        .reduce((obj,val) => (obj[val]=null,obj), {})
+schema = async table => {
+    const schematics = await db(table).columnInfo()
+    const columns = Object.keys(schematics)
+                .filter(field => field !== 'created_at' && field !== 'updated_at')
+    const empty = columns
+                .filter(val => val !== 'id')
+                .reduce((obj,val) => (obj[val]=null,obj), {})
+    const types = Object.assign({}, ...columns
+                .map(field => {return {[field]: schematics[field].type}}))
+    const fill = body => Object.assign({}, ...Object.keys(empty)
+                .map(field => {return {[field]: body[field] || null}}))
+    
+    return {
+        table,
+        columns,
+        empty,
+        types,
+        fill,
+    }
+}
 
 path = path => {
     let table = path.split('/')[2].split('?')[0]
@@ -29,8 +44,8 @@ unique = async table =>
         .then(constraints => constraints.rows)
         .map(row => row.constraint_name.split('_').filter(word => word !== table && word !== 'unique').join('_'))
 
-columns = async table =>
-    Object.keys(await db(table).columnInfo())
+// columns = async table =>
+//     Object.keys(await db(table).columnInfo())
 
 required = async table => {
     const not_required = ['id', table.slice(0, -1) + '_id', 'timestamp'] //move this to middleware
@@ -73,11 +88,15 @@ id = async (table, body, query) => {
 //EXPORTS
 module.exports = {
     path,
-    columns,
     required,
     body,
     params,
     id,
-    schema,
     unique,
+    tables,
+    schema,
+    // schema_empty,
+    // schema_columns,
+    // schema_types,
+    // Schema,
 }

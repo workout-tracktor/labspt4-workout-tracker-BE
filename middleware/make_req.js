@@ -1,12 +1,28 @@
-const {add, get, get_all, update, remove, remove_all} = require('../config/models')
+const {add_one, get_one, get_all, update_one, remove_one, remove_all} = require('../config/models')
 const {send_error} = require('./helpers/errors')
+const {tables} = require('./helpers/get')
 
 module.exports = async (req, res, next) => {
     switch(req.method) {
         case 'POST': {
             try {
-                req.response = await add(req.table, req.body)
-                if(!req.response) return send_error(res, '61204', req.table)
+                //loops through the stack, stores the last item (the initial item called) in the response
+                let responses = {}
+                for(let i=0; i<req.stack.length; i++) {
+                    //loop through previous responses, if key matches add id to current post request
+                    Object.keys(responses).forEach(key => {
+                        if(req.stack[i].body.hasOwnProperty(key)) {
+                            req.stack[i].body[key].push(...responses[key])
+                            delete responses[key]
+                        }
+                    })
+                    req.response = await add_one(req.stack[i].table, req.stack[i].body)
+                    if(req.response) 
+                        if(responses[req.stack[i].table]) responses[req.stack[i].table].push(req.response.id)
+                        else responses[req.stack[i].table] = [req.response.id]
+                }
+                if(!req.response) return send_error(res, '61205', req.table)
+                req.status = 201
                 next()
             } catch (err) {
                 return send_error(res, err.code, req.table)
@@ -20,7 +36,7 @@ module.exports = async (req, res, next) => {
                     record ? next() : send_error(res, 'P0002', req.table)
                 })
             } else {
-                get(req.table, req.query).then(records => {
+                get_one(req.table, req.query).then(records => {
                     req.response = records
                     records ? next() : send_error(res, 'P0002', req.table)
                 })
@@ -28,7 +44,7 @@ module.exports = async (req, res, next) => {
             break
         }
         case 'PUT': {
-            update(req.table, req.id, req.body).then(res => {
+            update_one(req.table, req.id, req.body).then(res => {
                 console.log('made it here', res)
                 req.response = res
                 next()
@@ -42,7 +58,7 @@ module.exports = async (req, res, next) => {
                     next() 
                 })
             } else {
-                remove(req.table, req.id).then(res => {
+                remove_one(req.table, req.id).then(res => {
                     req.response = res
                     next()
                 })

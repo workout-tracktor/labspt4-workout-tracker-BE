@@ -5,14 +5,12 @@ const db = require('../data/dbConfig')
 
 //CREATE
 //:adds and returns new row to given table
-const add = async (tbl, obj) => {
-    await db(tbl).insert(obj)
-    return await db(tbl).where(obj).first()
-}
+const add_one = async (tbl, obj) =>
+    (await db(tbl).insert(obj).returning('*'))[0]
 
 //READ
 //:returns a single row from the given table fitting a set of requirements
-const get = async (tbl, obj) => {
+const get_one = async (tbl, obj) => {
     const user = await db(tbl).where(obj).first()
     return user
 }
@@ -21,14 +19,14 @@ const get_all = async (tbl, obj) => await db(tbl).where(obj)
 
 //UPDATE
 //:updates and returns a row with given id from the given table 
-const update = async (tbl, id, obj) => {
+const update_one = async (tbl, id, obj) => {
     await db(tbl).where({id: id}).update(obj)
     return await get(tbl, {id: id})
 }
 
 //DELETE
 //:terminates a row with given id from the given table
-const remove = async (tbl, id) => {
+const remove_one = async (tbl, id) => {
     const obj = get(tbl, {id: id})
     await db(tbl).where({id: id}).delete()
     return obj
@@ -37,10 +35,10 @@ const remove = async (tbl, id) => {
 const remove_all = async (tbl) => await db(tbl).delete()
 
 module.exports = {
-    add,
-    get,
+    add_one,
+    get_one,
     get_all,
-    update,
-    remove,
+    update_one,
+    remove_one,
     remove_all
 }

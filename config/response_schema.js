@@ -7,7 +7,8 @@ module.exports = {
     exercises: {
         name: '',
         workout_type: '',
-        sets: [{id: '', reps: ''}],
+        sets: ['id'],
+        users: '',
         completed: '',
         created: '',
     },

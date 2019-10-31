@@ -1,4 +1,4 @@
-const {get, get_all} = require('../config/models')
+const {get_one, get_all} = require('../config/models')
 const schema = require('../config/response_schema')
 
 const fill_struct = async (struct, values) => {
@@ -10,13 +10,13 @@ const fill_struct = async (struct, values) => {
         // console.log('key', key, 'tbl', tbl)
         switch(type) {
             case 'string': {
-                if(struct[key]) res[key] = (await get(tbl, {id: values[key]}))[struct[key]]
+                if(struct[key]) res[key] = (await get_one(tbl, {id: values[key]}))[struct[key]]
                 else res[key] = values[key]
                 break
             }
             case 'object': {
                 console.log('valuekey', values[key])
-                const row = await get(tbl, {id: values[key]})
+                const row = await get_one(tbl, {id: values[key]})
                 res[key] = await fill_struct(struct[key], row)
                 break
             }
@@ -47,16 +47,19 @@ const fill_struct = async (struct, values) => {
 }
 
 module.exports = async (req, res, next) => {
-    const struct = schema[req.table]
-    let test = []
-    if(req.method === 'DELETE' && req.array) next()
-    if(req.array)
-        for(let i=0; i<req.response.length; i++) {
-            test.push(await fill_struct(struct, req.response[i]))
-        }
-    else
-        test = await fill_struct(struct, req.response)
+    // console.log('meth', req.method)
+    // console.log('arr', req.array)
 
-    req.response = test
+    // const struct = schema[req.table]
+    // let test = []
+    // if(req.method === 'DELETE' && req.array) next()
+    // if(req.array)
+    //     for(let i=0; i<req.response.length; i++) {
+    //         test.push(await fill_struct(struct, req.response[i]))
+    //     }
+    // else
+    //     test = await fill_struct(struct, req.response)
+
+    // req.response = test
     next()
 }

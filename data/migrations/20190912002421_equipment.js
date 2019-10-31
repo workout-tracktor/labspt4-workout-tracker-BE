@@ -8,10 +8,7 @@ exports.up = (knex) =>
             .unique()
             .notNullable()
         tbl.text('description')
-        tbl.bigint('created')
-            .notNullable()
-        tbl.bigint('updated')
-            .notNullable()
+        tbl.timestamps(true, true)
     })
 
 exports.down = (knex) =>
