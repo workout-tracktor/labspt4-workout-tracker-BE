@@ -96,16 +96,11 @@ const postception = async (table, body, tables) => {
 }
 
 module.exports = async (req, res, next) => {
-    console.clear()
     switch(req.method) {
         case 'POST': {
             const {table} = get.path(req.originalUrl)
             req.stack = await postception(table, req.body, await tables())
             if(req.stack.error) return send_error(res, req.stack.code, req.stack.table)
-            // return res.status(200).json(req.stack)
-            console.log('made it here pr')
-            console.log('err', req.stack.error)
-            console.log('made it here pr2')
             next()
             break
         }

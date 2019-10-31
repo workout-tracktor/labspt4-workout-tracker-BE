@@ -47,6 +47,9 @@ const fill_struct = async (struct, values) => {
 }
 
 module.exports = async (req, res, next) => {
+    // console.log('meth', req.method)
+    // console.log('arr', req.array)
+
     // const struct = schema[req.table]
     // let test = []
     // if(req.method === 'DELETE' && req.array) next()
