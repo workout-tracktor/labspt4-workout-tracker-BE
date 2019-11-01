@@ -12,7 +12,6 @@ module.exports =  async (req, res, next) => {
     switch(req.method) {
         case 'POST': {
             const {table} = get.path(req.originalUrl)
-            
             //check if all required fields are present
             const {required_fields, missing_fields} = await check.required(table, req.body)
             if(missing_fields.length) return send_error(res, '23502', table, missing_fields, required_fields)
@@ -25,10 +24,12 @@ module.exports =  async (req, res, next) => {
             break
         }
         case 'PUT': {
+
             const {array, table} = get.path(req.originalUrl)
             if(!array) {
                 req.id = await get.id(table, req.body, req.query)
                 req.id ? next() : send_error(res, 'P0001', table)
+
             }
             else next()
             break
