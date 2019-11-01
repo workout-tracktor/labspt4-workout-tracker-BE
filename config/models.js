@@ -21,7 +21,7 @@ const get_all = async (tbl, obj) => await db(tbl).where(obj)
 //:updates and returns a row with given id from the given table 
 const update_one = async (tbl, id, obj) => {
     await db(tbl).where({id: id}).update(obj)
-    return await get(tbl, {id: id})
+    return await get_one(tbl, {id: id})
 }
 
 //DELETE
