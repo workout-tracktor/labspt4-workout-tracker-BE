@@ -23,7 +23,7 @@ const unremarkable = async (table, body, unqiue_fields) => {
 
 //HELPERS
 const required = async (table, body) => {
-  const not_required = ['created_at', 'updated_at']
+  const not_required = ['created_at', 'updated_at', 'date']
   const required_fields = (await get.required(table)).filter(field => not_required.indexOf(field) === -1)
   const missing_fields = required_fields.filter(field => !body.hasOwnProperty(field))
   return {required_fields: required_fields, missing_fields: missing_fields}

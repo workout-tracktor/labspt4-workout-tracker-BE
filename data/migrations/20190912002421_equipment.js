@@ -8,6 +8,8 @@ exports.up = (knex) =>
             .unique()
             .notNullable()
         tbl.text('description')
+        tbl.text('date')
+            .notNullable()
         tbl.timestamps(true, true)
     })
 

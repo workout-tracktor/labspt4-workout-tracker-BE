@@ -46,7 +46,6 @@ module.exports = async (req, res, next) => {
         }
         case 'PUT': {
             update_one(req.table, req.id, req.body).then(res => {
-                console.log('made it here', res)
                 req.response = res
                 next()
             })

@@ -20,6 +20,8 @@ exports.up = (knex) =>
         tbl.text('last_name')
         tbl.text('unit_system')
         tbl.text('avatar')
+        tbl.text('date')
+            .notNullable()
         tbl.timestamps(true, true)
     })
 

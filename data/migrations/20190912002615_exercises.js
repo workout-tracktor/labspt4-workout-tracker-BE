@@ -17,6 +17,8 @@ exports.up = (knex) =>
         tbl.text('description')
         tbl.bool('completed')
         tbl.text('workout_type')
+        tbl.text('date')
+            .notNullable()
         tbl.timestamps(true, true)
     })
 
