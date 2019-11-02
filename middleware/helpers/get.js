@@ -2,6 +2,7 @@
 const db = require('../../data/dbConfig')
 const remove = require('../helpers/remove')
 const replace = require('../helpers/replace')
+const uuid = require('uuid')
 
 schema = async table => {
     const schematics = await db(table).columnInfo()
@@ -13,8 +14,12 @@ schema = async table => {
     const types = Object.assign({}, ...columns
                 .map(field => {return {[field]: schematics[field].type}}))
     const fill = body => Object.assign({}, ...Object.keys(empty)
-                .map(field => {return {[field]: body[field] || null}}))
-    
+                .map(field => {
+                    //adds a unique id to any table_id field if value isn't already given
+                    if(field === table.slice(0,-1)+'_id' && !body[field]) body[field] = uuid.v4()
+                    return {[field]: body[field] || null}
+            })
+    )
     return {
         table,
         columns,

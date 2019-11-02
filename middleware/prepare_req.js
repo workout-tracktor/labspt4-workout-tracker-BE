@@ -36,9 +36,6 @@ const check_object = async (table, body) => {
     if(body.hasOwnProperty('password'))
         body.password = crypt.hashSync(body.password, 1)
 
-    //make sure the user_id is unique
-    if(table === 'users') body.user_id = uuid.v4()
-
     //return full object with filled values
     const schema = await get.schema(table)
 
