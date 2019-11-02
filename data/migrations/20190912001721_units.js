@@ -16,6 +16,8 @@ exports.up = (knex) =>
             .defaultTo('standard')
         tbl.text('purpose')
             .notNullable()
+        tbl.text('date')
+            .notNullable()
         tbl.timestamps(true, true)
     })
 

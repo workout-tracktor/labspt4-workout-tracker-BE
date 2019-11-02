@@ -5,6 +5,14 @@ const check = require('./helpers/check')
 const {add_one, get_one, get_all, update_one, remove_one, remove_all} = require('../config/models')
 const {send_error} = require('./helpers/errors')
 
+const get_date = () => {
+    const time = new Date()
+    const year = time.getFullYear()
+    const month = time.getMonth()+1 < 10 ? `0${time.getMonth()+1}` : time.getMonth()+1
+    const day = time.getDate() < 10 ? `0${time.getDate()}` : time.getDate()
+    return `${year}-${month}-${day}`
+}
+
 //check and return value type
 const get_type = value => {
     let type = Array.isArray(value) ? 'array' : typeof value
@@ -33,6 +41,9 @@ const check_object = async (table, body) => {
 
     //return full object with filled values
     const schema = await get.schema(table)
+
+    //add todays date if no date is provided
+    if(!body.date) body.date = get_date()
 
     return schema.fill(body)
 }
@@ -90,6 +101,9 @@ const postception = async (table, body, tables) => {
     }
     //body should include all fields, not just the ones with data
     body = schema.fill(body)
+
+    //add todays date if no date is provided
+    if(!body.date) body.date = get_date()
     //add current item to the stack
     stack.push({table: table, body: body})
     return stack
@@ -100,6 +114,7 @@ module.exports = async (req, res, next) => {
         case 'POST': {
             const {table} = get.path(req.originalUrl)
             req.stack = await postception(table, req.body, await tables())
+            // return res.status(200).json(res.stack)
             if(req.stack.error) return send_error(res, req.stack.code, req.stack.table)
             next()
             break

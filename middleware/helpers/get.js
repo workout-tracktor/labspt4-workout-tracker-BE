@@ -6,7 +6,7 @@ const replace = require('../helpers/replace')
 schema = async table => {
     const schematics = await db(table).columnInfo()
     const columns = Object.keys(schematics)
-                .filter(field => field !== 'created_at' && field !== 'updated_at')
+                .filter(field => field !== 'created_at' && field !== 'updated_at') //if timestamps are auto
     const empty = columns
                 .filter(val => val !== 'id')
                 .reduce((obj,val) => (obj[val]=null,obj), {})
