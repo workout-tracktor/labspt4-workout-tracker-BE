@@ -13,7 +13,7 @@ server.use(express.json())  //json all the things!
 const warez = [
     require('../middleware/constraints'),
     require('../middleware/encrypt'),
-    require('../middleware/prepare_req'),
+    require('../middleware/prepare_req2'),
     require('../middleware/make_req'),
     require('../middleware/prepare_res'),
 ]
