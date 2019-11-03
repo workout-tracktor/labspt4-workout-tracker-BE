@@ -20,12 +20,30 @@ const get_type = value => {
     return type
 }
 
+//check id
+const check_id = async (table, id) => {
+    const field_name = typeof id === 'string' ? table.slice(0,-1)+'_id' : 'id'
+    const res = (await get_one(table, {[field_name]: id}))
+    return Boolean(res)
+}
+
 //check if object if legit and prepares it for the stack
 const check_object = async (table, body) => {
+    const schema = await get.schema(table)
+
+    //check if all table_id fields are actual ids
+    const table_ids = schema.id_fields.filter(field => body.hasOwnProperty(field))
+    for(id in table_ids) {
+        const field = table_ids[id]
+        const field_table = table_ids[id].slice(0,-3) + 's'
+        const exists = await check_id(field_table, body[field])
+        if(!exists) delete body[field]
+    }
+
     //check if all required fields are present
-    const {required_fields, missing_fields} = await check.required(table, body)
+    const missing_fields = schema.required.filter(field => !body.hasOwnProperty(field))
     if(missing_fields.length > 0)
-        return {error: true, table: table, code: 'P1111', required_fields: required_fields, missing_fields: missing_fields}
+        return {error: true, table: table, code: 'P1111', required_fields: schema.required, missing_fields: missing_fields}
 
     //check if all unqiue fields are unique
     const {unique_fields, unremarkable_fields} = await check.unique(table, body)
@@ -36,73 +54,45 @@ const check_object = async (table, body) => {
     if(body.hasOwnProperty('password'))
         body.password = crypt.hashSync(body.password, 1)
 
-    //return full object with filled values
-    const schema = await get.schema(table)
-
-    //add todays date if no date is provided
     if(!body.date) body.date = get_date()
 
     return schema.fill(body)
 }
 
-const check_id = async (table, id) => {
-    const field_name = typeof id === 'string' ? table.slice(0,-1)+'_id' : 'id'
-    const res = (await get_one(table, {[field_name]: id}))
-    return Boolean(res)
-}
-
-const router = async (table, body, expected_type) => {
-    let thereturned = {}
-    switch(get_type(body)) {
-        case 'number': return (error = 'C0001')
-        case 'string':
-        case 'integer':
-            if(await check_id(table, body)) {
-                if(expected_type === 'ARRAY') thereturned.body = [body]
-                thereturned.body = body
-            }
-            break
-        case 'object':
-            const stack_item = await check_object(table, body)
-            if(stack_item.error) thereturned.error = stack_item.error
-            if(thereturned.stack) thereturned.stack.push({table: table, body: body})
-            else thereturned.stack = [{table: table, body: stack_item}]
-            break
-        case 'array':
-            for(let i=body.length-1; i>=0; i--) {
-                const stack_item = await router(table, body[i])
-                if(stack_item.body)
-                    if(thereturned.body) thereturned.body.push(stack_item.body)
-                    else thereturned.body = [stack_item.body]
-                if(stack_item.stack)
-                    if(thereturned.stack) thereturned.stack.push(...stack_item.stack)
-                    else thereturned.stack = [...stack_item.stack]                
-            }
-    }
-    return thereturned
-}
-
-const postception = async (table, body, tables) => {
-    let stack = []
+const postception = async (table, body) => {
     const schema = await get.schema(table)
-    for(let idx in tables) {
-        const tbl = tables[idx]
-        //field has the same name as a table
-        if(body.hasOwnProperty(tbl)) {
-            const stack_item = await router(tbl, body[tbl], schema.types[tbl])
-            if(stack_item.error) return stack_item
-            if(stack_item.stack) stack.push(...stack_item.stack)
-            if(stack_item.body) body[tbl] = stack_item.body
-            else body[tbl] = schema.types[tbl] === 'ARRAY' ? [] : null
+    const stack = []
+    for(field in body) {
+        //check any objects as a possible new post request
+        //check any arrays for objects and loop through them
+        if(schema.tables.includes(field)) {
+            switch(get_type(body[field])) {
+                case 'object':
+                    body = await check_object(field, body[field])
+                    break
+                case 'array':
+                    const arr = body[field].filter(el => get_type(el) === 'object')
+                    for(el in arr) {
+                        const that = await postception(field, {[field]: body[field][el]})
+                        if(that) stack.push(...that)
+                    }
+                    break
+                default:
+                    //
+                    delete body[field]
+            }
+        }
+        //remove any fields that aren't in the table schema
+        if(!schema.fields.includes(field)) delete body[field]
+        //check the id of any incoming fields
+        if(schema.id_fields.includes(field)) {
+            const field_table = field.slice(0,-3) + 's'
+            const that = await check_id(field_table, body[field])
+            if(!that) delete body[field]
         }
     }
-    //body should include all fields, not just the ones with data
-    body = schema.fill(body)
 
-    //add todays date if no date is provided
-    if(!body.date) body.date = get_date()
-    //add current item to the stack
-    stack.push({table: table, body: body})
+    if(!body.error) stack.push({table: table, body: schema.fill(body)})
     return stack
 }
 
@@ -111,7 +101,7 @@ module.exports = async (req, res, next) => {
         case 'POST': {
             const {table} = get.path(req.originalUrl)
             req.stack = await postception(table, req.body, await tables())
-            console.log('rest', req.stack)
+            // console.log('rest', req.stack)
             return res.status(200).json(req.stack)
             if(req.stack.error) return send_error(res, req.stack.code, req.stack.table)
             next()
