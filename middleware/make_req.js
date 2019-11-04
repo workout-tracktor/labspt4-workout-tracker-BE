@@ -6,20 +6,22 @@ module.exports = async (req, res, next) => {
     switch(req.method) {
         case 'POST': {
             try {
-                //loops through the stack, stores the last item (the initial item called) in the response
-                let responses = {}
-                for(let i=0; i<req.stack.length; i++) {
-                    //loop through previous responses, if key matches add id to current post request
-                    Object.keys(responses).forEach(key => {
-                        if(req.stack[i].body.hasOwnProperty(key)) {
-                            req.stack[i].body[key].push(...responses[key])
-                            delete responses[key]
-                        }
-                    })
+                let base_id = '' //
+                let base_field = ''
+                for(let i=req.stack.length-1; i>=0; i--) {
+                    //if request requires has a field equal to base_field and is null; fill it with base_id
+                    if(req.stack[i].body[base_field] === null && i < req.stack.length-1)
+                        req.stack[i].body[base_field] = base_id
+                    
+                    //make the request
                     req.response = await add_one(req.stack[i].table, req.stack[i].body)
-                    if(req.response) 
-                        if(responses[req.stack[i].table]) responses[req.stack[i].table].push(req.response.id)
-                        else responses[req.stack[i].table] = [req.response.id]
+
+                    //the first request is the parent to all subsequent requests
+                    //store the base id and field name in case any children need it
+                    if(req.response && i === req.stack.length-1) {
+                        base_field = `${req.stack[i].table.slice(0,-1)}_id`
+                        base_id = req.response.id
+                    }
                 }
                 if(!req.response) return send_error(res, '61205', req.table)
                 req.status = 201

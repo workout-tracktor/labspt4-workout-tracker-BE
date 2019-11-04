@@ -10,9 +10,10 @@ module.exports = {
         avatar: '',
     },
     exercises: {
-        name: '',
+        _include: ['*'],
+        _exclude: ['id'],
         workout_type: '',
-        sets: ['id'],
+        sets: [{id: '', reps: ''}],
         users: '',
         completed: '',
         created: '',
