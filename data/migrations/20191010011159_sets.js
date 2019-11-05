@@ -9,6 +9,8 @@ exports.up = (knex) =>
             .references('id')
             .inTable('exercises')
             .notNullable()
+        tbl.text('workout_type')
+            .notNullable()
         tbl.integer('weight_units')
             .references('id')
             .inTable('units')
