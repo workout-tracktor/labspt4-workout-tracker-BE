@@ -89,8 +89,8 @@ params = (columns, given) => {
     const settings = Object.assign({}, given)
     const query = Object.assign({}, given)
     const reserved = ['limit', 'start_at'] //move this to middleware
-    remove.extras(columns, query)
-    remove.extras(reserved, settings)
+    // remove.extras(columns, query)
+    // remove.extras(reserved, settings)
     return {settings, query}
 }
 
