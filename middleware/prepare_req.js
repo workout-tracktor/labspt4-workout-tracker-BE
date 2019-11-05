@@ -79,6 +79,7 @@ const postception = async (parent_table, table, body) => {
                     for(el in arr) {
                         if(!body[field][el].date && body.date) body[field][el].date = body.date
                         if(!body[field][el].workout_type && body.workout_type) body[field][el].workout_type = body.workout_type
+                        if(!body[field][el].user_id && body.user_id)
                         const that = await postception(parent_table, field, {[field]: body[field][el]})
                         if(that) stack.push(...that)
                     }
