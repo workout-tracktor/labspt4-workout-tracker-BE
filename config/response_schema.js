@@ -13,7 +13,7 @@ module.exports = {
         _include: ['*'],
         _exclude: ['id'],
         workout_type: '',
-        sets: [{id: '', reps: ''}],
+        sets: {id: '', reps: ''},
         users: '',
         completed: '',
         created: '',
