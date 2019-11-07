@@ -10,6 +10,8 @@ exports.up = (knex) =>
         tbl.text('user_id')
             .references('user_id')
             .inTable('users')
+            .onUpdate('CASCADE')
+            .onDelete('CASCADE')
         tbl.integer('equipment_id')
             .references('id')
             .inTable('equipments')
