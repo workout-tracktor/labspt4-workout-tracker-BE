@@ -27,10 +27,19 @@ const check_id = async (table, id) => {
     return Boolean(res)
 }
 
+//fill empty child fields with parent value if given
+const fill_child = (parent, child) => {
+    child.schema.fields.forEach(field => {
+        if(!child.body[field] && parent.body[field]) child.body[field] = parent.body[field]
+    })
+    return child.body
+}
+
 //check if object if legit and prepares it for the stack
-const check_object = async (parent_table, table, body) => {
+const check_object = async (parent, table, body) => {
+    // console.log('checking object', table)
     const schema = await get.schema(table)
-    const parent_id_field = `${parent_table.slice(0,-1)}_id`
+    const parent_id_field = `${parent.table.slice(0,-1)}_id`
 
     //check if all table_id fields are actual ids
     const table_ids = schema.id_fields.filter(field => body.hasOwnProperty(field))
@@ -41,11 +50,15 @@ const check_object = async (parent_table, table, body) => {
         if(!exists) delete body[field]
     }
 
+    //fill empty child fields with parent value if given
+    fill_child(parent, {body: body, schema: schema})
+
     //check if all required fields are present
     //parent_id_field; if not valid, is filled in during make_req
     const missing_fields = schema.required
         .filter(field => field !== parent_id_field)
         .filter(field => !body.hasOwnProperty(field))
+
     if(missing_fields.length > 0)
         return {error: true, table: table, code: 'P1111', required_fields: schema.required, missing_fields: missing_fields}
 
@@ -60,32 +73,33 @@ const check_object = async (parent_table, table, body) => {
 
     if(!body.date) body.date = get_date()
 
-    return schema.fill(body)
+    return {table: table, body: schema.fill(body)}
 }
 
-const postception = async (parent_table, table, body) => {
+const postception = async (table, body, parent) => {
     const schema = await get.schema(table)
     const stack = []
-    for(field in body) {
-        //check any objects as a possible new post request
-        //check any arrays for objects and loop through them
+
+    if(!parent) parent = {table: table, body: body}
+    const stack_item = await check_object(parent, table, body)
+
+    for(const field in body) {
         if(schema.tables.includes(field)) {
             switch(get_type(body[field])) {
                 case 'object':
-                    body = await check_object(parent_table, field, body[field])
+                    if(!parent) parent = {table: table, body: body}
+                    const stack_item = await postception(field, body[field], parent)
+                    if(stack_item) stack.push(...stack_item)
                     break
                 case 'array':
                     const arr = body[field].filter(el => get_type(el) === 'object')
                     for(el in arr) {
-                        if(!body[field][el].date && body.date) body[field][el].date = body.date
-                        if(!body[field][el].workout_type && body.workout_type) body[field][el].workout_type = body.workout_type
-                        if(!body[field][el].user_id && body.user_id) body[field][el].user_id = body.user_id
-                        const that = await postception(parent_table, field, {[field]: body[field][el]})
-                        if(that) stack.push(...that)
+                        const parent = {table: table, body: body}
+                        const stack_item = await postception(field, body[field][el], parent)
+                        if(stack_item) stack.push(...stack_item)
                     }
                     break
                 default:
-                    //
                     delete body[field]
             }
         }
@@ -100,7 +114,7 @@ const postception = async (parent_table, table, body) => {
     }
 
     if(!body.date) body.date = get_date()
-    if(!body.error) stack.push({table: table, body: schema.fill(body)})
+    if(!body.error) stack.push(stack_item)
     return stack
 }
 
@@ -108,7 +122,7 @@ module.exports = async (req, res, next) => {
     switch(req.method) {
         case 'POST': {
             const {table} = get.path(req.originalUrl)
-            req.stack = await postception(table, table, req.body, await tables())
+            req.stack = await postception(table, req.body)
             // console.log('rest', req.stack)
             // return res.status(200).json(req.stack)
             if(req.stack.error) return send_error(res, req.stack.code, req.stack.table)

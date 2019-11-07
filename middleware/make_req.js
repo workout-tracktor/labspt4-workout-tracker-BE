@@ -12,10 +12,10 @@ module.exports = async (req, res, next) => {
                     //if request requires has a field equal to base_field and is null; fill it with base_id
                     if(req.stack[i].body[base_field] === null && i < req.stack.length-1)
                         req.stack[i].body[base_field] = base_id
-                    
                     //make the request
                     req.response = await add_one(req.stack[i].table, req.stack[i].body)
 
+                    // console.log('rr', req.response)
                     //the first request is the parent to all subsequent requests
                     //store the base id and field name in case any children need it
                     if(req.response && i === req.stack.length-1) {
