@@ -4,15 +4,34 @@ const remove = require('../helpers/remove')
 const replace = require('../helpers/replace')
 const uuid = require('uuid')
 
+required = async table => {
+    const not_required = ['id', table.slice(0, -1) + '_id', 'timestamp'] //move this to middleware
+    const schema = await db(table).columnInfo()
+    let required = []
+    for(let key in schema) if(!schema[key].nullable) required.push(key)
+    return required.remove(not_required)
+}
+
 schema = async table => {
+    //private
     const schematics = await db(table).columnInfo()
-    const columns = Object.keys(schematics)
+    const table_call = await db.raw(`SELECT table_name FROM information_schema.tables WHERE table_schema='public'`)
+                .then(schema => schema.rows.filter(table => !table.table_name.includes('knex_')))
+    const not_required = ['id', 'created_at', 'updated_at', 'date']
+    //public
+    const tables = table_call.map(table => table.table_name)
+    const fields = Object.keys(schematics)
                 .filter(field => field !== 'created_at' && field !== 'updated_at') //if timestamps are auto
-    const empty = columns
+    const id_fields = fields.filter(field => tables.includes(field.slice(0,-3)+'s'))
+    const empty = fields
                 .filter(val => val !== 'id')
                 .reduce((obj,val) => (obj[val]=null,obj), {})
-    const types = Object.assign({}, ...columns
+    const types = Object.assign({}, ...fields
                 .map(field => {return {[field]: schematics[field].type}}))
+    const required = Object.keys(schematics)
+                .filter(field => !schematics[field].nullable)
+                .filter(field => !not_required.includes(field))
+    //public functions
     const fill = body => Object.assign({}, ...Object.keys(empty)
                 .map(field => {
                     //adds a unique id to any table_id field if value isn't already given
@@ -22,9 +41,12 @@ schema = async table => {
     )
     return {
         table,
-        columns,
+        tables,
+        fields,
+        id_fields,
         empty,
         types,
+        required,
         fill,
     }
 }
@@ -67,8 +89,8 @@ params = (columns, given) => {
     const settings = Object.assign({}, given)
     const query = Object.assign({}, given)
     const reserved = ['limit', 'start_at'] //move this to middleware
-    remove.extras(columns, query)
-    remove.extras(reserved, settings)
+    // remove.extras(columns, query)
+    // remove.extras(reserved, settings)
     return {settings, query}
 }
 

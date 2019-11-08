@@ -27,7 +27,7 @@ const update_one = async (tbl, id, obj) => {
 //DELETE
 //:terminates a row with given id from the given table
 const remove_one = async (tbl, id) => {
-    const obj = get(tbl, {id: id})
+    const obj = get_one(tbl, {id: id})
     await db(tbl).where({id: id}).delete()
     return obj
 }
