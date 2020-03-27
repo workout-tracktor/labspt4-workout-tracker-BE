@@ -7,7 +7,11 @@ const router = express.Router()
 server.use(require('cors')())
 server.use(require('helmet')())
 server.use(express.json())  //json all the things!
-
+server.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
 //APP Middleware
 //:add these the order you want to use them
 const warez = [
